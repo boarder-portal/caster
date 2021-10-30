@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ESNext",
+    "jsx": "react",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "client/*": ["./app/client/*"],
+      "server/*": ["./app/server/*"],
+      "shared/*": ["./app/shared/*"]
+    },
+    "typeRoots": [
+      "node_modules/@types",
+      "app/shared/typings"
+    ],
+    "esModuleInterop": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
+    "sourceMap": true
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules/**"
+  ]
+}

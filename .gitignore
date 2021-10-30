@@ -1,0 +1,10 @@
+.idea
+.parcel-cache
+node_modules
+public
+
+.env
+
+app/shared/config.ts
+
+*.pcss.d.ts
