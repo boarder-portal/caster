@@ -12,7 +12,9 @@
     },
     "typeRoots": [
       "node_modules/@types",
-      "app/shared/typings"
+      "app/shared/typings",
+      "app/client/typings",
+      "app/server/typings"
     ],
     "esModuleInterop": true,
     "noUnusedLocals": true,

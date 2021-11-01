@@ -6,5 +6,6 @@ public
 .env
 
 app/shared/config.ts
+app/deno-server/typings/deno.d.ts
 
 *.pcss.d.ts

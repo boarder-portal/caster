@@ -1,0 +1,45 @@
+.root {
+  position: relative;
+}
+
+.player {
+  width: 100%;
+}
+
+.controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.loaderContainer, .playContainer {
+  composes: center from '../../styles/common.pcss';
+
+  width: 100%;
+  height: 100%;
+}
+
+.loaderContainer {
+  .loader {
+    width: auto;
+    height: 25%;
+  }
+}
+
+.playContainer {
+  cursor: pointer;
+  background-color: #0000;
+  transition: background-color ease-in-out 0.5s;
+
+  &:hover {
+    background-color: #0002;
+  }
+
+  .playButton {
+    width: auto;
+    height: 25%;
+    color: var(--mainColor);
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "streams": "https://deno.land/std/streams/mod.ts",
+    "oak": "https://deno.land/x/oak@v9.0.1/mod.ts",
+    "oak/": "https://deno.land/x/oak@v9.0.1/"
+  }
+}

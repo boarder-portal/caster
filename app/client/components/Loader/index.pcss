@@ -1,0 +1,21 @@
+.root {
+  aspect-ratio: 1 / 1;
+}
+
+.arc {
+  stroke: var(--mainColor);
+  stroke-width: 2;
+  stroke-dasharray: 48;
+  fill: none;
+  animation: rotation infinite 2s linear;
+}
+
+@keyframes rotation {
+  0% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: 96;
+  }
+}

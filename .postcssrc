@@ -2,6 +2,7 @@
   "modules": true,
   "plugins": {
     "autoprefixer": true,
-    "postcss-modules": true
+    "postcss-modules": true,
+    "postcss-nested": true,
   },
 }
