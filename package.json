@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start:dev": "run-p client:watch deno-server:watch css:watch rtmp:run",
-    "start:prod": "run-s client:build deno-server:run",
+    "start:prod": "run-p client:build deno-server:run rtmp:run",
     "client:watch": "parcel watch index.html --no-cache --cache-dir .parcel-cache --dist-dir ./public --public-url /public",
     "client:build": "parcel build index.html --cache-dir .parcel-cache --dist-dir ./public --public-url /public",
     "server:run": "npm run ts:run app/server/index.ts",
