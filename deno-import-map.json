@@ -1,6 +1,6 @@
 {
   "imports": {
-    "streams": "https://deno.land/std/streams/mod.ts",
+    "streams": "https://deno.land/std@0.113.0/streams/mod.ts",
     "oak": "https://deno.land/x/oak@v9.0.1/mod.ts",
     "oak/": "https://deno.land/x/oak@v9.0.1/"
   }

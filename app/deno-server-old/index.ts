@@ -15,25 +15,27 @@ for await (const connection of server) {
 
   (async () => {
     for await (const requestEvent of httpConn) {
-      try {
-        await main.handle(requestEvent);
-      } catch (e) {
-        let httpError: HttpError;
+      (async () => {
+        try {
+          await main.handle(requestEvent);
+        } catch (e) {
+          let httpError: HttpError;
 
-        if (e instanceof HttpError) {
-          httpError = e;
-        } else {
-          console.log(e);
+          if (e instanceof HttpError) {
+            httpError = e;
+          } else {
+            console.log(e);
 
-          httpError = new HttpError(500);
+            httpError = new HttpError(500);
+          }
+
+          await requestEvent.respondWith(
+            new Response(httpError.message, {
+              status: httpError.code,
+            }),
+          );
         }
-
-        await requestEvent.respondWith(
-          new Response(httpError.message, {
-            status: httpError.code,
-          }),
-        );
-      }
+      })();
     }
   })();
 }

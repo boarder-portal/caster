@@ -37,7 +37,7 @@ const Player: React.FC<Props> = (props) => {
       return;
     }
 
-    video.currentTime = video.buffered.end(0) - 0.001;
+    video.currentTime = video.buffered.end(0) - 0.1;
 
     video.play();
   }, []);

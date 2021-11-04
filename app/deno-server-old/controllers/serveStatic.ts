@@ -23,7 +23,7 @@ export function serveStatic(publicPath: string, serveFolder: string) {
     }
 
     try {
-      return await file(`${serveFolder}${match.pathname.groups[0]}`);
+      return await file(`${serveFolder}${filePath}`);
     } catch (e) {
       throw new HttpError(e instanceof Deno.errors.NotFound ? 404 : 400);
     }
