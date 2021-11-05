@@ -1,5 +1,5 @@
-import { Middleware } from 'oak';
+import { RouterMiddleware } from 'types/all.ts';
 
-export const getAllStreams: Middleware = async (ctx) => {
+export const getAllStreams: RouterMiddleware = async (ctx) => {
   ctx.response.body = [];
 };

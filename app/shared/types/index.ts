@@ -1,2 +1,6 @@
-export * from 'shared/types/common';
-export * from 'shared/types/config';
+export type Dictionary<T> = Partial<Record<string, T>>;
+
+export interface PublicUser {
+  _id: string;
+  login: string;
+}

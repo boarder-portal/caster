@@ -1,6 +1,16 @@
+:global {
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+}
+
 :root {
-  --mainColor: #fa0;
-  --secondaryColor: #f80;
+  --mainColor: inherit;
+  --secondaryColor: inherit;
+  --errorColor: inherit;
+  --textColor: inherit;
 
   font-size: 14px;
   font-family: "Trebuchet MS", Helvetica, sans-serif;
@@ -11,6 +21,16 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  color: var(--textColor);
+}
+
+a {
+  color: var(--secondaryColor);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 * {

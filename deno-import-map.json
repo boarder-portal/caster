@@ -1,7 +1,15 @@
 {
   "imports": {
+    "controllers/": "./app/deno-server/controllers/",
+    "helpers/": "./app/deno-server/helpers/",
+    "routes/": "./app/deno-server/routes/",
+    "types/": "./app/deno-server/types/",
+
     "streams": "https://deno.land/std@0.113.0/streams/mod.ts",
-    "oak": "https://deno.land/x/oak@v9.0.1/mod.ts",
-    "oak/": "https://deno.land/x/oak@v9.0.1/"
+    "mongo": "https://deno.land/x/mongo@v0.28.0/mod.ts",
+    "bcrypt": "https://deno.land/x/bcrypt@v0.2.4/mod.ts",
+    "redis": "https://deno.land/x/redis@v0.24.0/mod.ts",
+    "oak": "https://deno.land/x/oak@v9.0.0/mod.ts",
+    "oak_sessions": "https://deno.land/x/oak_sessions@v3.1.1/mod.ts"
   }
 }

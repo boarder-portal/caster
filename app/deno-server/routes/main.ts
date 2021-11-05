@@ -1,16 +1,23 @@
 import { Router } from 'oak';
 
-import { live } from '../controllers/live.ts';
-import { render } from '../controllers/render.ts';
-import { PUBLIC_PATH, serveStatic } from '../controllers/serveStatic.ts';
+import { RouterState } from 'types/all.ts';
 
-import apiRouter from './api.ts';
+import session from 'helpers/session.ts';
 
-const router = new Router();
+import { initState } from 'controllers/initState.ts';
+import { live } from 'controllers/live.ts';
+import { render } from 'controllers/render.ts';
+import { PUBLIC_PATH, serveStatic } from 'controllers/serveStatic.ts';
 
-router.get('/api', apiRouter.routes(), apiRouter.allowedMethods());
-router.get('/live/:streamPath', live);
+import apiRouter from './api/main.ts';
+
+const router = new Router<never, RouterState>();
+
 router.get(`${PUBLIC_PATH}/(.*)`, serveStatic);
+router.use(session.initMiddleware());
+router.use(initState);
+router.use('/api', apiRouter.routes(), apiRouter.allowedMethods());
+router.get('/live/:streamPath', live);
 router.get('(.*)', render);
 
 export default router;

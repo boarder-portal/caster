@@ -7,8 +7,8 @@
     "client:watch": "parcel watch index.html --no-cache --cache-dir .parcel-cache --dist-dir ./public --public-url /public",
     "client:build": "parcel build index.html --cache-dir .parcel-cache --dist-dir ./public --public-url /public",
     "server:run": "npm run ts:run app/server/index.ts",
-    "deno-server:watch": "denon run --import-map deno-import-map.json --allow-read --allow-net app/deno-server/index.ts",
-    "deno-server:run": "deno run --import-map deno-import-map.json --allow-read --allow-net app/deno-server/index.ts",
+    "deno-server:watch": "denon run --unstable --import-map deno-import-map.json --allow-read --allow-net app/deno-server/index.ts",
+    "deno-server:run": "deno run --unstable --import-map deno-import-map.json --allow-read --allow-net app/deno-server/index.ts",
     "rtmp:run": "npm run ts:run app/rtmp-server/index.ts",
     "css:watch": "tcm -p app/**/*.pcss --watch",
     "lint": "eslint . --ext .ts --ext .tsx",
@@ -66,6 +66,8 @@
     "koa-static": "^5.0.0",
     "node-media-server": "^2.3.8",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.0.0",
+    "recoil": "^0.5.0"
   }
 }

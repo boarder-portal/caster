@@ -9,6 +9,8 @@ export const error: Middleware = async (ctx, next) => {
     if (isHttpError(e)) {
       status = e.status;
     } else {
+      console.log('Server error', e);
+
       status = Status.InternalServerError;
     }
 

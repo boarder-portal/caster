@@ -6,16 +6,17 @@
   stroke: var(--mainColor);
   stroke-width: 2;
   stroke-dasharray: 48;
+  stroke-linecap: round;
   fill: none;
   animation: rotation infinite 2s linear;
 }
 
 @keyframes rotation {
   0% {
-    stroke-dashoffset: 0;
+    stroke-dashoffset: 96;
   }
 
   100% {
-    stroke-dashoffset: 96;
+    stroke-dashoffset: 0;
   }
 }

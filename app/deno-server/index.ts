@@ -1,7 +1,7 @@
 import { Application } from 'oak';
 
-import { error } from './controllers/error.ts';
-import mainRouter from './routes/main.ts';
+import { error } from 'controllers/error.ts';
+import mainRouter from 'routes/main.ts';
 
 console.log('Start server');
 
