@@ -7,7 +7,7 @@
     "baseUrl": ".",
     "paths": {
       "client/*": ["./app/client/*"],
-      "server/*": ["./app/server/*"],
+      "server/*": ["./app/rtmp-server/*"],
       "shared/*": ["./app/shared/*"]
     },
     "typeRoots": [

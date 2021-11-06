@@ -5,6 +5,7 @@ import { httpErrors } from 'oak';
 import { RouterMiddleware } from 'types';
 
 import { Validator } from 'helpers/Validator.ts';
+import { generateStreamToken } from 'helpers/generateStreamToken.ts';
 
 import { PrivateUser, User, getPublicUser } from 'db';
 
@@ -35,7 +36,7 @@ export const signup: RouterMiddleware = async (ctx) => {
     login: body.login,
     password: await hash(body.password),
     isLive: false,
-    streamToken: null,
+    streamToken: generateStreamToken(),
   };
   const userId = await User.insertOne(userInit);
 

@@ -17,7 +17,7 @@ router.get(`${PUBLIC_PATH}/(.*)`, serveStatic);
 router.use(session.initMiddleware());
 router.use(initState);
 router.use('/api', apiRouter.routes(), apiRouter.allowedMethods());
-router.get('/live/:streamPath', live);
+router.get('/live/:login', live);
 router.get('(.*)', render);
 
 export default router;

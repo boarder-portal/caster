@@ -4,5 +4,5 @@ import { PublicUser } from 'shared/types';
 
 export const userAtom = atom<PublicUser | null>({
   key: 'user',
-  default: null,
+  default: window.__USER__,
 });

@@ -9,7 +9,7 @@ export interface PrivateUser {
   login: string;
   password: string;
   isLive: boolean;
-  streamToken: string | null;
+  streamToken: string;
 }
 
 export const User = db.collection<PrivateUser>('users');
@@ -23,5 +23,6 @@ export function getPublicUser(user: PrivateUser | undefined): PublicUser | undef
     _id: String(user._id),
     login: user.login,
     isLive: user.isLive,
+    streamToken: user.streamToken,
   };
 }

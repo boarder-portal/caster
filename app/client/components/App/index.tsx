@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
@@ -7,6 +7,7 @@ import ApiClient from 'client/helpers/ApiClient';
 import Home from 'client/pages/Home';
 import Login from 'client/pages/Login';
 import Signup from 'client/pages/Signup';
+import Stream from 'client/pages/Stream';
 
 import { userAtom } from 'client/recoil/atoms';
 
@@ -21,10 +22,6 @@ const App: React.FC = () => {
     await apiClient.post('/api/auth/logout');
 
     setUser(null);
-  }, [setUser]);
-
-  useEffect(() => {
-    setUser(window.__USER__);
   }, [setUser]);
 
   return (
@@ -62,6 +59,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/u/:login" element={<Stream />} />
         </Routes>
       </div>
     </>

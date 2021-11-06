@@ -1,13 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-import Player from 'client/components/Player';
+import { AllLiveStreamsEvents } from 'shared/types';
 
-import classes from './index.pcss';
+import WSocket from 'shared/helpers/WSocket';
 
 const Home: React.FC = () => {
+  useEffect(() => {
+    let ws: WSocket<AllLiveStreamsEvents, never> | undefined;
+
+    (async () => {
+      ws = new WSocket(`ws://${location.host}/api/stream/subscribeAll`);
+
+      for await (const event of ws) {
+        console.log(event);
+      }
+    })();
+
+    return () => {
+      ws?.close();
+    };
+  }, []);
+
   return (
-    <div className={classes.playerContainer}>
-      <Player className={classes.player} id="droooney" />
+    <div>
+      <Link to="/u/123">
+        123
+      </Link>
     </div>
   );
 };

@@ -3,8 +3,9 @@ import { Application } from 'oak';
 import { error } from 'controllers/error.ts';
 import mainRouter from 'routes/main.ts';
 
-import { User, migrate } from 'db';
+import { migrate } from 'db';
 
+// await migrate(1);
 await migrate();
 
 console.log('Database migrated');
