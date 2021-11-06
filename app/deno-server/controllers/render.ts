@@ -1,6 +1,6 @@
-import { RouterMiddleware } from 'types/all.ts';
+import { RouterMiddleware } from 'types';
 
-import { getPublicUser } from 'helpers/db.ts';
+import { getPublicUser } from 'db';
 
 export const render: RouterMiddleware = async (ctx) => {
   const indexFile = await Deno.readTextFile(`${Deno.cwd()}/public/index.html`);

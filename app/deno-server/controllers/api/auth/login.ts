@@ -1,10 +1,11 @@
 import { compare } from 'bcrypt';
 import { httpErrors } from 'oak';
 
-import { RouterMiddleware } from 'types/all.ts';
+import { RouterMiddleware } from 'types';
 
 import { Validator } from 'helpers/Validator.ts';
-import { User, getPublicUser } from 'helpers/db.ts';
+
+import { User, getPublicUser } from 'db';
 
 const validator: Validator<Body> = new Validator<Body>({
   login: /^[a-z\d_-]+$/,

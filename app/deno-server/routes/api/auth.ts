@@ -1,6 +1,6 @@
 import { Router } from 'oak';
 
-import { RouterState } from 'types/all.ts';
+import { RouterState } from 'types';
 
 import { login } from 'controllers/api/auth/login.ts';
 import { logout } from 'controllers/api/auth/logout.ts';

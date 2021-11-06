@@ -1,6 +1,6 @@
 import { Router } from 'oak';
 
-import { RouterState } from 'types/all.ts';
+import { RouterState } from 'types';
 
 import session from 'helpers/session.ts';
 

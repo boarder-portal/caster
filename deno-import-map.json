@@ -3,7 +3,8 @@
     "controllers/": "./app/deno-server/controllers/",
     "helpers/": "./app/deno-server/helpers/",
     "routes/": "./app/deno-server/routes/",
-    "types/": "./app/deno-server/types/",
+    "types": "./app/deno-server/types/all.ts",
+    "db": "./app/deno-server/db/all.ts",
 
     "streams": "https://deno.land/std@0.113.0/streams/mod.ts",
     "mongo": "https://deno.land/x/mongo@v0.28.0/mod.ts",

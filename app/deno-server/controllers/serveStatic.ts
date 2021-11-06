@@ -1,6 +1,6 @@
 import { send } from 'oak';
 
-import { RouterMiddleware } from 'types/all.ts';
+import { RouterMiddleware } from 'types';
 
 export const PUBLIC_PATH = '/public';
 

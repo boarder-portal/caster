@@ -1,8 +1,8 @@
 import { Bson } from 'mongo';
 
-import { RouterMiddleware } from 'types/all.ts';
+import { RouterMiddleware } from 'types';
 
-import { User } from 'helpers/db.ts';
+import { User } from 'db';
 
 export const initState: RouterMiddleware = async (ctx, next) => {
   ctx.state.user = await User.findOne({

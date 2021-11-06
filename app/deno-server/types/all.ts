@@ -4,7 +4,7 @@ import {
 } from 'oak';
 import { Session } from 'oak_sessions';
 
-import { PrivateUser } from 'helpers/db.ts';
+import { PrivateUser } from 'db';
 
 export interface RouterState {
   session: Session;

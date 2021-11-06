@@ -8,5 +8,6 @@ public
 
 app/shared/config.ts
 app/deno-server/typings/deno.d.ts
+app/deno-server/db/version
 
 *.pcss.d.ts

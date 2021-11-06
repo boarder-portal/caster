@@ -1,10 +1,12 @@
 import { hash } from 'bcrypt';
+import { InsertDocument } from 'mongo';
 import { httpErrors } from 'oak';
 
-import { RouterMiddleware } from 'types/all.ts';
+import { RouterMiddleware } from 'types';
 
 import { Validator } from 'helpers/Validator.ts';
-import { User, getPublicUser } from 'helpers/db.ts';
+
+import { PrivateUser, User, getPublicUser } from 'db';
 
 const validator: Validator<Body> = new Validator<Body>({
   login: /^[a-z\d_-]+$/,
@@ -29,9 +31,11 @@ export const signup: RouterMiddleware = async (ctx) => {
     throw new httpErrors.Conflict();
   }
 
-  const userInit = {
+  const userInit: InsertDocument<PrivateUser> = {
     login: body.login,
     password: await hash(body.password),
+    isLive: false,
+    streamToken: null,
   };
   const userId = await User.insertOne(userInit);
 
