@@ -5,10 +5,25 @@ declare module 'node-media-server' {
   export interface Config {
     rtmp?: {
       port?: number;
+      chunk_size?: number;
+      gop_cache?: boolean;
+      ping?: number;
+      ping_timeout?: number;
     };
     http?: {
       port?: number;
+      mediaroot?: string;
       allow_origin?: string;
+    };
+    trans?: {
+      ffmpeg?: string;
+      tasks?: {
+        app?: string;
+        hls?: boolean;
+        hlsFlags?: string;
+        dash?: boolean;
+        dashFlags?: string;
+      }[];
     };
   }
 

@@ -1,5 +1,9 @@
+import { config } from 'dotenv';
 import fetch from 'node-fetch';
 import NodeMediaServer from 'node-media-server';
+import path from 'path';
+
+const { FFMPEG_PATH } = config().parsed ?? {};
 
 const nms = new NodeMediaServer({
   rtmp: {
@@ -7,8 +11,19 @@ const nms = new NodeMediaServer({
   },
   http: {
     port: 5391,
+    mediaroot: path.resolve('./media').replace(/\\/g, '/'),
     // eslint-disable-next-line camelcase
     allow_origin: '*',
+  },
+  trans: {
+    ffmpeg: FFMPEG_PATH,
+    tasks: [
+      {
+        app: 'live',
+        hls: true,
+        hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
+      },
+    ],
   },
 });
 

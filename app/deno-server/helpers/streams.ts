@@ -1,32 +1,30 @@
-type Subscriber = (login: string, isLive: boolean) => unknown;
+import { PrivateUser, User } from 'db';
+
+type Subscriber = (user: PrivateUser) => unknown;
 
 class Streams {
-  #liveStreams: Set<string>;
+  #liveStreams: Map<string, PrivateUser>;
   #subscribers: Set<Subscriber>;
 
   constructor() {
-    this.#liveStreams = new Set();
+    this.#liveStreams = new Map();
     this.#subscribers = new Set();
   }
 
-  end(login: string) {
-    this.#liveStreams.delete(login);
+  change(user: PrivateUser) {
+    if (user.isLive) {
+      this.#liveStreams.set(user.login, user);
+    } else {
+      this.#liveStreams.delete(user.login);
+    }
 
     for (const subscriber of this.#subscribers) {
-      subscriber(login, false);
+      subscriber(user);
     }
   }
 
-  getLiveStreams(): Set<string> {
+  getLiveStreams(): Map<string, PrivateUser> {
     return this.#liveStreams;
-  }
-
-  start(login: string) {
-    this.#liveStreams.add(login);
-
-    for (const subscriber of this.#subscribers) {
-      subscriber(login, true);
-    }
   }
 
   subscribe(subscriber: Subscriber) {

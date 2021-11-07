@@ -10,7 +10,7 @@ import WSocket from 'shared-helpers/WSocket.ts';
 const getAllLiveStreamsEvent = (): AllLiveStreamsEvent => {
   return {
     type: 'getLiveStreams',
-    liveStreams: [...streams.getLiveStreams()],
+    liveStreams: [...streams.getLiveStreams().keys()],
   };
 };
 
@@ -31,7 +31,7 @@ export const subscribeAll: RouterMiddleware = async (ctx) => {
     }
   } catch {
     ws.close();
+  } finally {
+    unsubscribe();
   }
-
-  unsubscribe();
 };

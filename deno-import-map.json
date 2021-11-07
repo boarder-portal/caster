@@ -8,6 +8,7 @@
     "db": "./app/deno-server/db/all.ts",
 
     "streams": "https://deno.land/std@0.113.0/streams/mod.ts",
+    "dotenv": "https://deno.land/x/dotenv@v3.1.0/mod.ts",
     "mongo": "https://deno.land/x/mongo@v0.28.0/mod.ts",
     "bcrypt": "https://deno.land/x/bcrypt@v0.2.4/mod.ts",
     "redis": "https://deno.land/x/redis@v0.24.0/mod.ts",

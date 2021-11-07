@@ -3,6 +3,7 @@
 .parcel-cache
 node_modules
 public
+media
 
 .env
 

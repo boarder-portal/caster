@@ -19,12 +19,15 @@ export const end: RouterMiddleware<{ token: string }> = async (ctx) => {
     throw new httpErrors.Conflict();
   }
 
-  streams.end(user.login);
-
   await User.updateOne(
     { _id: user._id },
     { $set: { isLive: false } },
   );
+
+  streams.change({
+    ...user,
+    isLive: false,
+  });
 
   ctx.response.body = {};
 };

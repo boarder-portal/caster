@@ -1,6 +1,10 @@
-export default class WSocket<Incoming extends object | unknown, Outgoing extends object> {
-  #socket: WebSocket;
-  #opened: Promise<void>;
+interface SocketEvent {
+  type: string;
+}
+
+export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing extends SocketEvent> {
+  readonly #socket: WebSocket;
+  readonly #opened: Promise<void>;
 
   constructor(socketInit: WebSocket | string) {
     const socket = typeof socketInit === 'string'
