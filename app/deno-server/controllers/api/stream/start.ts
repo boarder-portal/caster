@@ -24,7 +24,7 @@ export const start: RouterMiddleware<{ token: string }> = async (ctx) => {
     { $set: { isLive: true } },
   );
 
-  streams.change({
+  streams.start({
     ...user,
     isLive: true,
   });

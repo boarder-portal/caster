@@ -7,9 +7,13 @@ export interface PublicUser {
   streamToken: string;
 }
 
+export interface PublicStream {
+  login: string;
+}
+
 export interface AllLiveStreamsEvent {
   type: 'getLiveStreams';
-  liveStreams: string[];
+  liveStreams: PublicStream[];
 }
 
 export type AllLiveStreamsEvents = AllLiveStreamsEvent;

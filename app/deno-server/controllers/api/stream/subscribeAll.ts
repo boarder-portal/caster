@@ -10,7 +10,7 @@ import WSocket from 'shared-helpers/WSocket.ts';
 const getAllLiveStreamsEvent = (): AllLiveStreamsEvent => {
   return {
     type: 'getLiveStreams',
-    liveStreams: [...streams.getLiveStreams().keys()],
+    liveStreams: [...streams.getLiveStreams().values()].map(streams.getPublicStream),
   };
 };
 

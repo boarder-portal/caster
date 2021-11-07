@@ -24,10 +24,7 @@ export const end: RouterMiddleware<{ token: string }> = async (ctx) => {
     { $set: { isLive: false } },
   );
 
-  streams.change({
-    ...user,
-    isLive: false,
-  });
+  streams.end(user.login);
 
   ctx.response.body = {};
 };

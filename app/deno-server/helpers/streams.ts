@@ -1,9 +1,16 @@
-import { PrivateUser, User } from 'db';
+import { PublicStream } from 'types';
 
-type Subscriber = (user: PrivateUser) => unknown;
+import { PrivateUser } from 'db';
+
+interface PrivateStream {
+  login: string;
+  streamToken: string;
+}
+
+type Subscriber = (stream: PrivateStream) => unknown;
 
 class Streams {
-  #liveStreams: Map<string, PrivateUser>;
+  #liveStreams: Map<string, PrivateStream>;
   #subscribers: Set<Subscriber>;
 
   constructor() {
@@ -11,20 +18,41 @@ class Streams {
     this.#subscribers = new Set();
   }
 
-  change(user: PrivateUser) {
-    if (user.isLive) {
-      this.#liveStreams.set(user.login, user);
-    } else {
-      this.#liveStreams.delete(user.login);
+  end(login: string) {
+    const stream = this.#liveStreams.get(login);
+
+    if (!stream) {
+      return;
     }
 
+    this.#liveStreams.delete(login);
+
     for (const subscriber of this.#subscribers) {
-      subscriber(user);
+      subscriber(stream);
     }
   }
 
-  getLiveStreams(): Map<string, PrivateUser> {
+  getLiveStreams(): Map<string, PrivateStream> {
     return this.#liveStreams;
+  }
+
+  getPublicStream(stream: PrivateStream): PublicStream {
+    return {
+      login: stream.login,
+    };
+  }
+
+  start(user: PrivateUser) {
+    const stream: PrivateStream = {
+      login: user.login,
+      streamToken: user.streamToken,
+    };
+
+    this.#liveStreams.set(user.login, stream);
+
+    for (const subscriber of this.#subscribers) {
+      subscriber(stream);
+    }
   }
 
   subscribe(subscriber: Subscriber) {
