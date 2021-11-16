@@ -1,6 +1,5 @@
 import { Input } from '@mui/material';
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import Player from 'client/components/Player';
@@ -9,12 +8,33 @@ import { userAtom } from 'client/recoil/atoms';
 
 import classes from './index.pcss';
 
-const Stream: React.FC = () => {
-  const { login } = useParams<'login'>();
+interface Props {
+  login: string;
+}
+
+const Stream: React.FC<Props> = (props) => {
+  const { login } = props;
+
+  const [message, setMessage] = useState('');
 
   const user = useRecoilValue(userAtom);
 
-  console.log(user, login);
+  const sendMessage = useCallback(() => {
+    console.log('send message', message);
+
+    setMessage('');
+  }, [message]);
+
+  const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }, [sendMessage]);
+
+  const onMessageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+  }, []);
 
   if (!login) {
     return null;
@@ -39,6 +59,9 @@ const Stream: React.FC = () => {
               multiline
               maxRows={4}
               disableUnderline
+              value={message}
+              onChange={onMessageChange}
+              onKeyDown={onKeyDown}
             />
           ) : (
             <span className={classes.alert}>

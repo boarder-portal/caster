@@ -1,10 +1,10 @@
-import { Bson, Database, MongoClient } from 'mongo';
+import { Bson } from 'mongo';
 
-import { PublicUser } from 'types';
+import { PrivateUser, PublicUser } from 'types';
 
 import db from './db.ts';
 
-export interface PrivateUser {
+export interface ServerUser {
   _id: Bson.ObjectId;
   login: string;
   password: string;
@@ -12,9 +12,9 @@ export interface PrivateUser {
   streamToken: string;
 }
 
-export const User = db.collection<PrivateUser>('users');
+export const User = db.collection<ServerUser>('users');
 
-export function getPublicUser(user: PrivateUser | undefined): PublicUser | undefined {
+export function getPrivateUser(user: ServerUser | undefined): PrivateUser | undefined {
   if (!user) {
     return;
   }
@@ -24,5 +24,16 @@ export function getPublicUser(user: PrivateUser | undefined): PublicUser | undef
     login: user.login,
     isLive: user.isLive,
     streamToken: user.streamToken,
+  };
+}
+
+export function getPublicUser(user: ServerUser | undefined): PublicUser | undefined {
+  if (!user) {
+    return;
+  }
+
+  return {
+    login: user.login,
+    isLive: user.isLive,
   };
 }

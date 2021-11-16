@@ -51,4 +51,6 @@ export async function migrate(version?: number) {
   await Deno.writeTextFile(VERSION_PATH, String(version));
 }
 
+export * from './prepare.ts';
+
 export default db;

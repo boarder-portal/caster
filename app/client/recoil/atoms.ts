@@ -1,8 +1,8 @@
 import { atom } from 'recoil';
 
-import { PublicUser } from 'shared/types';
+import { PrivateUser } from 'shared/types';
 
-export const userAtom = atom<PublicUser | null>({
+export const userAtom = atom<PrivateUser | null>({
   key: 'user',
   default: window.__USER__,
 });

@@ -5,7 +5,7 @@ import { RouterMiddleware } from 'types';
 
 import { Validator } from 'helpers/Validator.ts';
 
-import { User, getPublicUser } from 'db';
+import { User, getPrivateUser } from 'db';
 
 const validator: Validator<Body> = new Validator<Body>({
   login: /^[a-z\d_-]+$/,
@@ -33,6 +33,6 @@ export const login: RouterMiddleware = async (ctx) => {
   await ctx.state.session.set('userId', String(user._id));
 
   ctx.response.body = {
-    user: getPublicUser(user),
+    user: getPrivateUser(user),
   };
 };

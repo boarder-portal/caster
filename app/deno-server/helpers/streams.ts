@@ -1,6 +1,6 @@
 import { PublicStream } from 'types';
 
-import { PrivateUser } from 'db';
+import { ServerUser, User } from 'db';
 
 interface PrivateStream {
   login: string;
@@ -42,7 +42,13 @@ class Streams {
     };
   }
 
-  start(user: PrivateUser) {
+  async loadLive() {
+    for await (const user of User.find({ isLive: true })) {
+      this.start(user);
+    }
+  }
+
+  start(user: ServerUser) {
     const stream: PrivateStream = {
       login: user.login,
       streamToken: user.streamToken,

@@ -1,10 +1,15 @@
 export type Dictionary<T> = Partial<Record<string, T>>;
 
-export interface PublicUser {
+export interface PrivateUser {
   _id: string;
   login: string;
   isLive: boolean;
   streamToken: string;
+}
+
+export interface PublicUser {
+  login: string;
+  isLive: boolean;
 }
 
 export interface PublicStream {

@@ -19,9 +19,8 @@ export default class ApiClient {
 
   #baseUrl = `${location.origin}/api`;
 
-  async #request(url: URL | string, init?: RequestInit) {
-    const urlObject = new URL(url, this.#baseUrl);
-    const response = await fetch(urlObject.toString(), init);
+  async #request(url: URL, init?: RequestInit) {
+    const response = await fetch(url.toString(), init);
 
     if (!ApiClient.#isSuccess(response)) {
       throw new HttpError(
@@ -34,7 +33,7 @@ export default class ApiClient {
   }
 
   get<T>(url: string, query: Record<string, string> = {}): Promise<T> {
-    const urlObject = new URL(url, this.#baseUrl);
+    const urlObject = new URL(this.#baseUrl + url);
 
     for (const key in query) {
       if (!{}.hasOwnProperty.call(query, key)) {
@@ -44,13 +43,13 @@ export default class ApiClient {
       urlObject.searchParams.set(key, query[key]);
     }
 
-    return this.#request(urlObject.toString(), {
+    return this.#request(urlObject, {
       method: 'GET',
     });
   }
 
   post<T>(url: string, body?: object): Promise<T> {
-    return this.#request(url, {
+    return this.#request(new URL(this.#baseUrl + url), {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {

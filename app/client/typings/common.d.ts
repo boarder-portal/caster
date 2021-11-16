@@ -1,7 +1,7 @@
-import { PublicUser } from 'shared/types';
+import { PrivateUser } from 'shared/types';
 
 declare global {
   interface Window {
-    __USER__: PublicUser | null;
+    __USER__: PrivateUser | null;
   }
 }

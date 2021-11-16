@@ -7,7 +7,7 @@ import ApiClient from 'client/helpers/ApiClient';
 import Home from 'client/pages/Home';
 import Login from 'client/pages/Login';
 import Signup from 'client/pages/Signup';
-import Stream from 'client/pages/Stream';
+import User from 'client/pages/User';
 
 import { userAtom } from 'client/recoil/atoms';
 
@@ -59,7 +59,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/u/:login" element={<Stream />} />
+          <Route path="/u/:login" element={<User />} />
         </Routes>
       </div>
     </>

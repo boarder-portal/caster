@@ -1,13 +1,13 @@
 import { Button, TextField } from '@mui/material';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-import { PublicUser } from 'shared/types';
+import { PrivateUser } from 'shared/types';
 
 import ApiClient, { HttpError } from 'client/helpers/ApiClient';
 
-import { useBoolean } from 'client/hooks';
+import { useAsyncData } from 'client/hooks';
 import { userAtom } from 'client/recoil/atoms';
 
 import * as classes from './index.pcss';
@@ -19,10 +19,18 @@ const Signup: React.FC = () => {
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
   const {
-    value: isSubmitting,
-    setTrue: submit,
-    setFalse: stopSubmit,
-  } = useBoolean(false);
+    data: user,
+    isLoading: isSubmitting,
+    error,
+    load: submit,
+  } = useAsyncData(async () => {
+    const { user } = await apiClient.post<{ user: PrivateUser }>('/auth/signup', {
+      login: loginRef.current?.value,
+      password: passwordRef.current?.value,
+    });
+
+    return user;
+  });
   const [errorCode, setErrorCode] = useState<number | null>(null);
   const setUser = useSetRecoilState(userAtom);
   const navigate = useNavigate();
@@ -31,26 +39,26 @@ const Signup: React.FC = () => {
     e.preventDefault();
 
     submit();
+  }, [submit]);
 
-    try {
-      const { user } = await apiClient.post<{user: PublicUser}>('/api/auth/signup', {
-        login: loginRef.current?.value,
-        password: passwordRef.current?.value,
-      });
-
-      setErrorCode(null);
+  useEffect(() => {
+    if (user) {
       setUser(user);
       navigate('/');
-    } catch (err) {
-      if (err instanceof HttpError) {
-        setErrorCode(err.getResponse().status);
+    }
+  }, [navigate, setUser, user]);
+
+  useEffect(() => {
+    if (error) {
+      if (error instanceof HttpError) {
+        setErrorCode(error.getResponse().status);
       } else {
         setErrorCode(-1);
       }
-    } finally {
-      stopSubmit();
+    } else {
+      setErrorCode(null);
     }
-  }, [navigate, setUser, stopSubmit, submit]);
+  }, [error]);
 
   return (
     <div className={classes.root}>

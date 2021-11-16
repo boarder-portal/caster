@@ -49,6 +49,7 @@ const Player: React.FC<Props> = (props) => {
 
     const player = flvjs.createPlayer({
       type: 'flv',
+      isLive: true,
       url: `/live/${id}`,
     });
 

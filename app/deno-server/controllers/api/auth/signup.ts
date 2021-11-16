@@ -7,7 +7,7 @@ import { RouterMiddleware } from 'types';
 import { Validator } from 'helpers/Validator.ts';
 import { generateStreamToken } from 'helpers/generateStreamToken.ts';
 
-import { PrivateUser, User, getPublicUser } from 'db';
+import { ServerUser, User, getPrivateUser } from 'db';
 
 const validator: Validator<Body> = new Validator<Body>({
   login: /^[a-z\d_-]+$/,
@@ -32,7 +32,7 @@ export const signup: RouterMiddleware = async (ctx) => {
     throw new httpErrors.Conflict();
   }
 
-  const userInit: InsertDocument<PrivateUser> = {
+  const userInit: InsertDocument<ServerUser> = {
     login: body.login,
     password: await hash(body.password),
     isLive: false,
@@ -43,7 +43,7 @@ export const signup: RouterMiddleware = async (ctx) => {
   await ctx.state.session.set('userId', String(userId));
 
   ctx.response.body = {
-    user: getPublicUser({
+    user: getPrivateUser({
       _id: userId,
       ...userInit,
     }),

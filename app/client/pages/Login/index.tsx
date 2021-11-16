@@ -1,13 +1,13 @@
 import { Button, TextField } from '@mui/material';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-import { PublicUser } from 'shared/types';
+import { PrivateUser } from 'shared/types';
 
 import ApiClient from 'client/helpers/ApiClient';
 
-import { useBoolean } from 'client/hooks';
+import { useAsyncData } from 'client/hooks';
 import { userAtom } from 'client/recoil/atoms';
 
 import * as classes from './index.pcss';
@@ -19,15 +19,18 @@ const Login: React.FC = () => {
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
   const {
-    value: isSubmitting,
-    setTrue: submit,
-    setFalse: stopSubmit,
-  } = useBoolean(false);
-  const {
-    value: isError,
-    setTrue: error,
-    setFalse: noError,
-  } = useBoolean(false);
+    data: user,
+    isLoading: isSubmitting,
+    error,
+    load: submit,
+  } = useAsyncData(async () => {
+    const { user } = await apiClient.post<{ user: PrivateUser }>('/auth/login', {
+      login: loginRef.current?.value,
+      password: passwordRef.current?.value,
+    });
+
+    return user;
+  });
   const setUser = useSetRecoilState(userAtom);
   const navigate = useNavigate();
 
@@ -35,28 +38,20 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     submit();
+  }, [submit]);
 
-    try {
-      const { user } = await apiClient.post<{ user: PublicUser }>('/api/auth/login', {
-        login: loginRef.current?.value,
-        password: passwordRef.current?.value,
-      });
-
-      noError();
+  useEffect(() => {
+    if (user) {
       setUser(user);
       navigate('/');
-    } catch {
-      error();
-    } finally {
-      stopSubmit();
     }
-  }, [error, navigate, noError, setUser, stopSubmit, submit]);
+  }, [navigate, setUser, user]);
 
   return (
     <div className={classes.root}>
       <form className={classes.form} onSubmit={onSubmit}>
         <span className={classes.error}>
-          {isError ? 'Incorrect login or password' : '\u00a0'}
+          {error ? 'Incorrect login or password' : '\u00a0'}
         </span>
 
         <TextField
