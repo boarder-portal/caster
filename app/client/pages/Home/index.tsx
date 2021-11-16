@@ -1,11 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { AllLiveStreamsEvents } from 'shared/types';
+import { AllLiveStreamsEvents, PublicStream } from 'shared/types';
 
 import WSocket from 'shared/helpers/WSocket';
 
+import * as classes from './index.pcss';
+
 const Home: React.FC = () => {
+  const [liveStreams, setLiveStreams] = useState<PublicStream[]>([]);
+
   useEffect(() => {
     let ws: WSocket<AllLiveStreamsEvents, never> | undefined;
 
@@ -13,7 +17,13 @@ const Home: React.FC = () => {
       ws = new WSocket(`ws://${location.host}/api/stream/subscribeAll`);
 
       for await (const event of ws) {
-        console.log(event);
+        switch (event.type) {
+          case 'getLiveStreams': {
+            setLiveStreams(event.liveStreams);
+
+            break;
+          }
+        }
       }
     })();
 
@@ -23,11 +33,28 @@ const Home: React.FC = () => {
   }, []);
 
   return (
-    <div>
-      <Link to="/u/123">
-        123
-      </Link>
-    </div>
+    <>
+      <div className={classes.liveStreams}>
+        {liveStreams.map(({ login }) => (
+          <div
+            key={login}
+            className={classes.liveStream}
+          >
+            <Link
+              className={classes.thumbnail}
+              to={`/u/${login}`}
+              style={{
+                backgroundImage: `url(/public/thumbnails/${login}.png)`,
+              }}
+            />
+
+            <span>
+              {login}
+            </span>
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 

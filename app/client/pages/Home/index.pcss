@@ -1,0 +1,28 @@
+.liveStreams {
+  align-self: center;
+  display: grid;
+
+  .liveStream {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .thumbnail {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background-size: contain;
+    }
+  }
+
+  @media (min-width: 401px) {
+    grid-template-columns: 200px 200px 200px 200px;
+    gap: 10px;
+  }
+
+  @media (max-width: 400px) {
+    width: 100%;
+    grid-auto-columns: 1fr;
+    gap: 10px;
+  }
+}

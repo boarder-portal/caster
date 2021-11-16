@@ -3,8 +3,6 @@
   align-items: center;
   justify-content: space-between;
   flex: none;
-  height: 60px;
-  padding: 0 40px;
 
   .logo {
     font-size: 20px;
@@ -18,7 +16,7 @@
     }
 
     .logout {
-      color: var(--secondaryColor);
+      color: var(--secondaryMainColor);
       cursor: pointer;
     }
   }
@@ -28,11 +26,24 @@
     align-items: center;
     gap: 10px;
   }
+
+  @media (min-width: 401px) {
+    height: 60px;
+    padding: 0 40px;
+  }
+
+  @media (max-width: 400px) {
+    height: 40px;
+    padding: 0 10px;
+  }
 }
 
 .content {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  padding: 40px;
+
+  @media (min-width: 401px) {
+    padding: 40px;
+  }
 }

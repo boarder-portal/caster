@@ -17,8 +17,8 @@ const theme = createTheme({
 });
 
 const globalCssVars = {
-  '--mainColor': theme.palette.primary.main,
-  '--secondaryColor': theme.palette.secondary.main,
+  '--primaryMainColor': theme.palette.primary.main,
+  '--secondaryMainColor': theme.palette.secondary.main,
   '--errorColor': theme.palette.error.main,
   '--textColor': theme.palette.text.primary,
 };
