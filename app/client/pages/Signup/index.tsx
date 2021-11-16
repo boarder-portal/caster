@@ -1,5 +1,5 @@
 import { Button, TextField } from '@mui/material';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
@@ -31,7 +31,6 @@ const Signup: React.FC = () => {
 
     return user;
   });
-  const [errorCode, setErrorCode] = useState<number | null>(null);
   const setUser = useSetRecoilState(userAtom);
   const navigate = useNavigate();
 
@@ -48,25 +47,13 @@ const Signup: React.FC = () => {
     }
   }, [navigate, setUser, user]);
 
-  useEffect(() => {
-    if (error) {
-      if (error instanceof HttpError) {
-        setErrorCode(error.getResponse().status);
-      } else {
-        setErrorCode(-1);
-      }
-    } else {
-      setErrorCode(null);
-    }
-  }, [error]);
-
   return (
     <div className={classes.root}>
       <form className={classes.form} onSubmit={onSubmit}>
         <span className={classes.error}>
           {
-            errorCode
-              ? errorCode === 409
+            error
+              ? error instanceof HttpError && error.getResponse().status === 409
                 ? 'Login already exists'
                 : 'Incorrect login or password'
               : '\u00a0'

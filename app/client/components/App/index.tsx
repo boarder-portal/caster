@@ -19,7 +19,7 @@ const App: React.FC = () => {
   const [user, setUser] = useRecoilState(userAtom);
 
   const logout = useCallback(async () => {
-    await apiClient.post('/api/auth/logout');
+    await apiClient.post('/auth/logout');
 
     setUser(null);
   }, [setUser]);
