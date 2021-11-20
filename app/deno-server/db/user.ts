@@ -14,11 +14,7 @@ export interface ServerUser {
 
 export const User = db.collection<ServerUser>('users');
 
-export function getPrivateUser(user: ServerUser | undefined): PrivateUser | undefined {
-  if (!user) {
-    return;
-  }
-
+export function getPrivateUser(user: ServerUser): PrivateUser {
   return {
     _id: String(user._id),
     login: user.login,
@@ -27,11 +23,7 @@ export function getPrivateUser(user: ServerUser | undefined): PrivateUser | unde
   };
 }
 
-export function getPublicUser(user: ServerUser | undefined): PublicUser | undefined {
-  if (!user) {
-    return;
-  }
-
+export function getPublicUser(user: ServerUser): PublicUser {
   return {
     login: user.login,
     isLive: user.isLive,

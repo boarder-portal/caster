@@ -13,7 +13,8 @@ export interface PublicUser {
 }
 
 export interface PublicStream {
-  login: string;
+  user: PublicUser;
+  duration: number;
 }
 
 export interface AllLiveStreamsEvent {

@@ -5,7 +5,8 @@ const DELAY = 15 * 1000;
 
 export async function generateThumbnails(ffmpegPath: string) {
   while (true) {
-    for (const { login, streamToken } of streams.getLiveStreams().values()) {
+    for (const stream of streams.getLiveStreams().values()) {
+      const { login, streamToken } = stream.getUser();
       const process = Deno.run({
         cmd: [
           ffmpegPath,

@@ -32,24 +32,46 @@ const Home: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let timestamp = Date.now();
+
+    const id = setInterval(() => {
+      const newTimestamp = Date.now();
+      const timeDiff = newTimestamp - timestamp;
+
+      timestamp = newTimestamp;
+
+      setLiveStreams((liveStreams) => {
+        return liveStreams.map((stream) => ({
+          ...stream,
+          duration: stream.duration + timeDiff,
+        }));
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(id);
+    };
+  }, []);
+
   return (
     <>
       <div className={classes.liveStreams}>
-        {liveStreams.map(({ login }) => (
+        {liveStreams.map(({ user }) => (
           <div
-            key={login}
+            key={user.login}
             className={classes.liveStream}
           >
             <Link
               className={classes.thumbnail}
-              to={`/u/${login}`}
+              to={`/u/${user.login}`}
               style={{
-                backgroundImage: `url(/public/thumbnails/${login}.png)`,
+                backgroundImage: `url(/public/thumbnails/${user.login}.png)`,
               }}
             />
 
             <span>
-              {login}
+              {user.login}
             </span>
           </div>
         ))}

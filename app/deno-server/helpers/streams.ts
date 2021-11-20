@@ -1,16 +1,13 @@
 import { PublicStream } from 'types';
 
-import { ServerUser, User } from 'db';
+import { ServerUser, User, getPublicUser } from 'db';
 
-interface PrivateStream {
-  login: string;
-  streamToken: string;
-}
+import Stream from './Stream.ts';
 
-type Subscriber = (stream: PrivateStream) => unknown;
+type Subscriber = (stream: Stream) => unknown;
 
 class Streams {
-  #liveStreams: Map<string, PrivateStream>;
+  #liveStreams: Map<string, Stream>;
   #subscribers: Set<Subscriber>;
 
   constructor() {
@@ -32,13 +29,14 @@ class Streams {
     }
   }
 
-  getLiveStreams(): Map<string, PrivateStream> {
+  getLiveStreams(): Map<string, Stream> {
     return this.#liveStreams;
   }
 
-  getPublicStream(stream: PrivateStream): PublicStream {
+  getPublicStream(stream: Stream): PublicStream {
     return {
-      login: stream.login,
+      user: getPublicUser(stream.getUser()),
+      duration: Date.now() - stream.getStartTime(),
     };
   }
 
@@ -49,10 +47,7 @@ class Streams {
   }
 
   start(user: ServerUser) {
-    const stream: PrivateStream = {
-      login: user.login,
-      streamToken: user.streamToken,
-    };
+    const stream = new Stream(user);
 
     this.#liveStreams.set(user.login, stream);
 
