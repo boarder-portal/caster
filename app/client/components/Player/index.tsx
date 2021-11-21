@@ -15,6 +15,12 @@ interface Props extends WithClassName {
   id: string;
 }
 
+flvjs.LoggingControl.applyConfig({
+  enableDebug: false,
+  enableVerbose: false,
+  enableInfo: false,
+});
+
 const Player: React.FC<Props> = (props) => {
   const { className, id } = props;
 

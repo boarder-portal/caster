@@ -4,7 +4,15 @@ interface SocketEvent {
   type: string;
 }
 
-export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing extends SocketEvent> extends EventStream<Incoming> {
+type ExtendedSocketEvent<T> = T | {
+  type: '#close';
+  code: number;
+};
+
+export default class WSocket<
+  Incoming extends SocketEvent | unknown,
+  Outgoing extends SocketEvent
+> extends EventStream<ExtendedSocketEvent<Incoming>> {
   readonly #socket: WebSocket;
   readonly #opened: Promise<void>;
 
@@ -25,8 +33,8 @@ export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing ex
     return this.#opened;
   }
 
-  close() {
-    this.#socket.close();
+  close(code?: number) {
+    this.#socket.close(code);
   }
 
   async send(event: Outgoing) {
@@ -37,10 +45,14 @@ export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing ex
     }
   }
 
-  [Symbol.asyncIterator](): AsyncIterator<Incoming, undefined> {
+  [Symbol.asyncIterator](): AsyncIterator<ExtendedSocketEvent<Incoming>, undefined> {
     const iterator = super[Symbol.asyncIterator]();
 
-    const closeListener = () => {
+    const closeListener = (event: CloseEvent) => {
+      this.emit({
+        type: '#close',
+        code: event.code,
+      });
       this.emit(null);
     };
 
@@ -48,7 +60,7 @@ export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing ex
       this.emit(JSON.parse(event.data));
     };
 
-    const clearup = () => {
+    const cleanup = () => {
       this.#socket.removeEventListener('close', closeListener);
       this.#socket.removeEventListener('message', messageListener);
     };
@@ -63,7 +75,7 @@ export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing ex
         return iterator.next();
       },
       throw: async () => {
-        clearup();
+        cleanup();
 
         return await iterator.throw?.() ?? {
           value: undefined,
@@ -71,7 +83,7 @@ export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing ex
         };
       },
       return: async () => {
-        clearup();
+        cleanup();
 
         return await iterator.return?.() ?? {
           value: undefined,

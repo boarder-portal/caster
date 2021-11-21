@@ -1,22 +1,12 @@
-:global {
-  #root {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-
-    @media (min-width: 401px) {
-      min-width: 1024px;
-    }
-  }
-}
-
 :root {
   --primaryMainColor: inherit;
+  --primaryDarkColor: inherit;
   --secondaryMainColor: inherit;
   --errorColor: inherit;
   --textColor: inherit;
   --borderColor: #0001;
   --scrollbarColor: #0008;
+  --scroll: 1;
 
   --boxShadow: 0 0 5px 1px var(--borderColor);
 
@@ -30,6 +20,19 @@ html, body {
   padding: 0;
   height: 100%;
   color: var(--textColor);
+}
+
+:global {
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    height: calc(100% / (1 - var(--scroll)));
+
+    @media (min-width: 601px) {
+      min-width: 1024px;
+    }
+  }
 }
 
 a {
@@ -52,6 +55,7 @@ a {
       &-track,
       &-thumb {
         width: 6px;
+        height: 6px;
       }
 
       &-track {
@@ -60,15 +64,7 @@ a {
 
       &-thumb {
         border-radius: 6px;
-        background-color: transparent;
-      }
-    }
-
-    &:hover {
-      &::-webkit-scrollbar {
-        &-thumb {
-          background-color: var(--scrollbarColor);
-        }
+        background-color: var(--scrollbarColor);
       }
     }
   }

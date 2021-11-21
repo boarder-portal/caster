@@ -44,7 +44,7 @@ export const subscribe: RouterMiddleware<{ login: string }> = async (ctx) => {
         }
       })(),
     ]);
-  } catch {
+  } finally {
     eventStream.cancel();
     ws.close();
   }

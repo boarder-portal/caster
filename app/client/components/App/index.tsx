@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import ApiClient from 'client/helpers/ApiClient';
 
@@ -9,7 +9,7 @@ import Login from 'client/pages/Login';
 import Signup from 'client/pages/Signup';
 import User from 'client/pages/User';
 
-import { userAtom } from 'client/recoil/atoms';
+import { isMobileAtom, userAtom } from 'client/recoil/atoms';
 
 import * as classes from './index.pcss';
 
@@ -17,12 +17,26 @@ const apiClient = new ApiClient();
 
 const App: React.FC = () => {
   const [user, setUser] = useRecoilState(userAtom);
+  const setIsMobile = useSetRecoilState(isMobileAtom);
 
   const logout = useCallback(async () => {
     await apiClient.post('/auth/logout');
 
     setUser(null);
   }, [setUser]);
+
+  useEffect(() => {
+    const queryList = window.matchMedia('(max-width: 600px)');
+    const listener = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+    };
+
+    queryList.addEventListener('change', listener);
+
+    return () => {
+      queryList.removeEventListener('change', listener);
+    };
+  }, [setIsMobile]);
 
   return (
     <>

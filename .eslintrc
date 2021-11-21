@@ -218,13 +218,13 @@
       "error",
       {
         "blankLine": "always",
-        "prev": ["return", "block", "block-like", "break", "continue"],
+        "prev": ["return", "block", "block-like", "break", "continue", "throw"],
         "next": "*"
       },
       {
         "blankLine": "always",
         "prev": "*",
-        "next": ["return", "block", "block-like", "break", "continue"]
+        "next": ["return", "block", "block-like", "break", "continue", "throw"]
       },
       {
         "blankLine": "always",

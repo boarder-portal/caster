@@ -9,24 +9,28 @@ import WSocket from 'shared/helpers/WSocket';
 
 import Player from 'client/components/Player';
 
-import { userAtom } from 'client/recoil/atoms';
+import { useContentScroll } from 'client/hooks';
+import { isMobileAtom, userAtom } from 'client/recoil/atoms';
 
 import classes from './index.pcss';
 
 interface Props {
   login: string;
+  onStreamEnd(): void;
 }
 
 const Stream: React.FC<Props> = (props) => {
-  const { login } = props;
+  const { login, onStreamEnd } = props;
 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   const wsRef = useRef<WSocket<StreamServerEvent, StreamClientEvent> | null>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
+  const closedExternallyRef = useRef<boolean>(false);
 
   const user = useRecoilValue(userAtom);
+  const isMobile = useRecoilValue(isMobileAtom);
 
   const sendMessage = useCallback(() => {
     if (!message) {
@@ -67,12 +71,19 @@ const Stream: React.FC<Props> = (props) => {
           }
         }
       }
+
+      if (closedExternallyRef.current) {
+        return;
+      }
+
+      onStreamEnd();
     })();
 
     return () => {
+      closedExternallyRef.current = true;
       ws.close();
     };
-  }, [login]);
+  }, [login, onStreamEnd]);
 
   useEffect(() => {
     const messages = messagesRef.current;
@@ -93,6 +104,8 @@ const Stream: React.FC<Props> = (props) => {
       messages.scrollTop = maxScroll;
     }
   }, [messages.length]);
+
+  useContentScroll(!isMobile);
 
   if (!login) {
     return null;

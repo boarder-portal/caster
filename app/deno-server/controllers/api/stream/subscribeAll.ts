@@ -43,7 +43,7 @@ export const subscribeAll: RouterMiddleware = async (ctx) => {
         }
       })(),
     ]);
-  } catch {
+  } finally {
     eventStream.cancel();
     ws.close();
   }

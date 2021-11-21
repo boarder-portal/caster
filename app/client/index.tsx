@@ -18,6 +18,7 @@ const theme = createTheme({
 
 const globalCssVars = {
   '--primaryMainColor': theme.palette.primary.main,
+  '--primaryDarkColor': theme.palette.primary.dark,
   '--secondaryMainColor': theme.palette.secondary.main,
   '--errorColor': theme.palette.error.main,
   '--textColor': theme.palette.text.primary,

@@ -1,4 +1,5 @@
-type Subscriber<T> = (event: T | null) => unknown;
+type AllowedEvent<T> = T | Error | null;
+type Subscriber<T> = (event: AllowedEvent<T>) => unknown;
 
 export default class EventStream<T> {
   readonly #subscribers = new Set<Subscriber<T>>();
@@ -11,15 +12,15 @@ export default class EventStream<T> {
     };
   }
 
-  emit(event: T | null) {
+  emit(event: AllowedEvent<T>) {
     for (const subscriber of this.#subscribers) {
       subscriber(event);
     }
   }
 
   [Symbol.asyncIterator](): AsyncIterator<T, undefined> {
-    const events: (T | null)[] = [];
-    let resolveEvent: ((event: T | null) => void) | undefined;
+    const events: AllowedEvent<T>[] = [];
+    let resolveEvent: ((event: AllowedEvent<T>) => void) | undefined;
 
     const unsubscribe = this.#subscribe(
       (event) => {
@@ -34,6 +35,12 @@ export default class EventStream<T> {
     return {
       next: async () => {
         const queuedEvent = events.shift();
+
+        if (queuedEvent instanceof Error) {
+          unsubscribe();
+
+          throw queuedEvent;
+        }
 
         if (queuedEvent === null) {
           unsubscribe();
@@ -51,9 +58,15 @@ export default class EventStream<T> {
           };
         }
 
-        const event = await new Promise<T | null>((resolve) => resolveEvent = resolve);
+        const event = await new Promise<AllowedEvent<T>>((resolve) => resolveEvent = resolve);
 
         resolveEvent = undefined;
+
+        if (event instanceof Error) {
+          unsubscribe();
+
+          throw event;
+        }
 
         if (event) {
           return {

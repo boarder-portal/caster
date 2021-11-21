@@ -5,9 +5,12 @@ import { PublicUser } from 'shared/types';
 
 import ApiClient from 'client/helpers/ApiClient';
 
+import Loader from 'client/components/Loader';
 import Stream from 'client/components/Stream';
 
 import { useAsyncData } from 'client/hooks';
+
+import classes from './index.pcss';
 
 const apiClient = new ApiClient();
 
@@ -30,7 +33,11 @@ const User: React.FC = () => {
   }, [loadUser]);
 
   if (isLoadingUser) {
-    return null;
+    return (
+      <div className={classes.container}>
+        <Loader className={classes.loader} />
+      </div>
+    );
   }
 
   if (error) {
@@ -46,7 +53,7 @@ const User: React.FC = () => {
   }
 
   return (
-    <Stream login={user.login} />
+    <Stream login={user.login} onStreamEnd={loadUser} />
   );
 };
 

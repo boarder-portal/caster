@@ -1,8 +1,19 @@
+:root {
+  @media (min-width: 601px) {
+    --header-height: 60px;
+  }
+
+  @media (max-width: 600px) {
+    --header-height: 40px;
+  }
+}
+
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex: none;
+  height: var(--header-height);
 
   .logo {
     font-size: 20px;
@@ -27,13 +38,11 @@
     gap: 10px;
   }
 
-  @media (min-width: 401px) {
-    height: 60px;
+  @media (min-width: 601px) {
     padding: 0 40px;
   }
 
-  @media (max-width: 400px) {
-    height: 40px;
+  @media (max-width: 600px) {
     padding: 0 10px;
   }
 }
@@ -41,9 +50,10 @@
 .content {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  flex-grow: var(--scroll);
+  height: calc((100% - var(--header-height)) / (1 - var(--scroll)));
 
-  @media (min-width: 401px) {
+  @media (min-width: 601px) {
     padding: 40px;
   }
 }
