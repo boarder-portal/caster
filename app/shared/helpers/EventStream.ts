@@ -58,9 +58,13 @@ export default class EventStream<T> {
           };
         }
 
-        const event = await new Promise<AllowedEvent<T>>((resolve) => resolveEvent = resolve);
+        const event = await new Promise<AllowedEvent<T>>((resolve) => {
+          resolveEvent = (event) => {
+            resolveEvent = undefined;
 
-        resolveEvent = undefined;
+            resolve(event);
+          };
+        });
 
         if (event instanceof Error) {
           unsubscribe();
