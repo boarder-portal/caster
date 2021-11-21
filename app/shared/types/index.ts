@@ -17,6 +17,11 @@ export interface PublicStream {
   duration: number;
 }
 
+export interface ChatMessage {
+  user: PublicUser;
+  message: string;
+}
+
 export interface AllLiveStreamsEvent {
   type: 'getLiveStreams';
   liveStreams: PublicStream[];
@@ -31,7 +36,7 @@ export interface SendMessageEvent {
 
 export interface MessageSentEvent {
   type: 'messageSent';
-  message: string;
+  message: ChatMessage;
 }
 
 export type StreamServerEvent = MessageSentEvent;

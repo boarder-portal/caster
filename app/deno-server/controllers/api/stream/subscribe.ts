@@ -9,6 +9,8 @@ import streams from 'helpers/streams.ts';
 import WSocket from 'shared-helpers/WSocket.ts';
 import { cancelableAsyncIterable } from 'shared-helpers/cancelableAsyncIterable.ts';
 
+import { getPublicUser } from 'db';
+
 export const subscribe: RouterMiddleware<{ login: string }> = async (ctx) => {
   const ws = new WSocket<unknown, StreamServerEvent>(await ctx.upgrade());
 
@@ -31,8 +33,13 @@ export const subscribe: RouterMiddleware<{ login: string }> = async (ctx) => {
       })(),
       (async () => {
         for await (const event of ws) {
-          if (stream.isSendMessageEvent(event)) {
-            stream.messageSent(event.message);
+          const { user } = ctx.state;
+
+          if (stream.isSendMessageEvent(event) && user) {
+            stream.messageSent({
+              user: getPublicUser(user),
+              message: event.message,
+            });
           }
         }
       })(),

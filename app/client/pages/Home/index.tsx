@@ -11,11 +11,9 @@ const Home: React.FC = () => {
   const [liveStreams, setLiveStreams] = useState<PublicStream[]>([]);
 
   useEffect(() => {
-    let ws: WSocket<StreamsServerEvent, never> | undefined;
+    const ws = new WSocket<StreamsServerEvent, never>(`ws://${location.host}/api/stream/subscribeAll`);
 
     (async () => {
-      ws = new WSocket(`ws://${location.host}/api/stream/subscribeAll`);
-
       for await (const event of ws) {
         switch (event.type) {
           case 'getLiveStreams': {
@@ -28,7 +26,7 @@ const Home: React.FC = () => {
     })();
 
     return () => {
-      ws?.close();
+      ws.close();
     };
   }, []);
 

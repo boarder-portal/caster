@@ -1,4 +1,4 @@
-import { SendMessageEvent, StreamServerEvent, PublicStream } from 'types';
+import { ChatMessage, SendMessageEvent, StreamServerEvent, PublicStream } from 'types';
 
 import EventStream from 'shared-helpers/EventStream.ts';
 
@@ -42,7 +42,7 @@ export default class Stream extends EventStream<StreamServerEvent> {
     );
   }
 
-  messageSent(message: string) {
+  messageSent(message: ChatMessage) {
     this.emit({
       type: 'messageSent',
       message,

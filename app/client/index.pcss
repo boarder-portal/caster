@@ -16,6 +16,7 @@
   --errorColor: inherit;
   --textColor: inherit;
   --borderColor: #0001;
+  --scrollbarColor: #0008;
 
   --boxShadow: 0 0 5px 1px var(--borderColor);
 
@@ -42,4 +43,33 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+@media (hover: hover) {
+  * {
+    &::-webkit-scrollbar {
+      &,
+      &-track,
+      &-thumb {
+        width: 6px;
+      }
+
+      &-track {
+        background-color: transparent;
+      }
+
+      &-thumb {
+        border-radius: 6px;
+        background-color: transparent;
+      }
+    }
+
+    &:hover {
+      &::-webkit-scrollbar {
+        &-thumb {
+          background-color: var(--scrollbarColor);
+        }
+      }
+    }
+  }
 }

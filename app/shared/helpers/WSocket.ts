@@ -57,7 +57,11 @@ export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing ex
     this.#socket.addEventListener('message', messageListener);
 
     return {
-      next: iterator.next,
+      next: async () => {
+        await this.#opened;
+
+        return iterator.next();
+      },
       throw: async () => {
         clearup();
 
