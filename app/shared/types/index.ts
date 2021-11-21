@@ -22,4 +22,18 @@ export interface AllLiveStreamsEvent {
   liveStreams: PublicStream[];
 }
 
-export type AllLiveStreamsEvents = AllLiveStreamsEvent;
+export type StreamsServerEvent = AllLiveStreamsEvent;
+
+export interface SendMessageEvent {
+  type: 'sendMessage';
+  message: string;
+}
+
+export interface MessageSentEvent {
+  type: 'messageSent';
+  message: string;
+}
+
+export type StreamServerEvent = MessageSentEvent;
+
+export type StreamClientEvent = SendMessageEvent;

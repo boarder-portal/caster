@@ -17,6 +17,9 @@ export async function generateThumbnails(ffmpegPath: string) {
           '-vf', 'scale=-2:300',
           `${Deno.cwd().replace(/\\/g, '/')}/public/thumbnails/${login}.png`,
         ],
+        stdin: 'null',
+        stdout: 'null',
+        stderr: 'null',
       });
 
       await process.status();

@@ -1,12 +1,16 @@
+import EventStream from 'shared/helpers/EventStream';
+
 interface SocketEvent {
   type: string;
 }
 
-export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing extends SocketEvent> {
+export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing extends SocketEvent> extends EventStream<Incoming> {
   readonly #socket: WebSocket;
   readonly #opened: Promise<void>;
 
   constructor(socketInit: WebSocket | string) {
+    super();
+
     const socket = typeof socketInit === 'string'
       ? new WebSocket(socketInit)
       : socketInit;
@@ -28,82 +32,44 @@ export default class WSocket<Incoming extends SocketEvent | unknown, Outgoing ex
   async send(event: Outgoing) {
     await this.#opened;
 
-    this.#socket.send(JSON.stringify(event));
+    if (this.#socket.readyState === this.#socket.OPEN) {
+      this.#socket.send(JSON.stringify(event));
+    }
   }
 
   [Symbol.asyncIterator](): AsyncIterator<Incoming, undefined> {
-    const messages: string[] = [];
-    let resolveClose: (() => void) | undefined;
-    let resolveMessage: ((message: string) => void) | undefined;
+    const iterator = super[Symbol.asyncIterator]();
 
     const closeListener = () => {
-      resolveClose?.();
+      this.emit(null);
     };
 
     const messageListener = (event: MessageEvent) => {
-      if (resolveMessage) {
-        resolveMessage(event.data);
-      } else {
-        messages.push(event.data);
-      }
+      this.emit(JSON.parse(event.data));
+    };
+
+    const clearup = () => {
+      this.#socket.removeEventListener('close', closeListener);
+      this.#socket.removeEventListener('message', messageListener);
     };
 
     this.#socket.addEventListener('close', closeListener);
     this.#socket.addEventListener('message', messageListener);
 
     return {
-      next: async () => {
-        await this.#opened;
-
-        if (this.#socket.readyState === this.#socket.CLOSED) {
-          return {
-            value: undefined,
-            done: true,
-          };
-        }
-
-        const queuedMessage = messages.shift();
-
-        if (queuedMessage) {
-          return {
-            value: JSON.parse(queuedMessage),
-            done: false,
-          };
-        }
-
-        const message = await Promise.race([
-          new Promise<string>((resolve) => resolveMessage = resolve),
-          new Promise<void>((resolve) => resolveClose = resolve),
-        ]);
-
-        resolveMessage = undefined;
-
-        if (typeof message === 'string') {
-          return {
-            value: JSON.parse(message),
-            done: false,
-          };
-        }
-
-        return {
-          value: undefined,
-          done: true,
-        };
-      },
+      next: iterator.next,
       throw: async () => {
-        this.#socket.removeEventListener('close', closeListener);
-        this.#socket.removeEventListener('message', messageListener);
+        clearup();
 
-        return {
+        return await iterator.throw?.() ?? {
           value: undefined,
           done: true,
         };
       },
       return: async () => {
-        this.#socket.removeEventListener('close', closeListener);
-        this.#socket.removeEventListener('message', messageListener);
+        clearup();
 
-        return {
+        return await iterator.return?.() ?? {
           value: undefined,
           done: true,
         };

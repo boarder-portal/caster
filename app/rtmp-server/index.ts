@@ -25,6 +25,7 @@ const nms = new NodeMediaServer({
       },
     ],
   },
+  logType: 1,
 });
 
 nms.on('prePublish', async (id) => {

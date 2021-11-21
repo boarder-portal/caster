@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { AllLiveStreamsEvents, PublicStream } from 'shared/types';
+import { PublicStream, StreamsServerEvent } from 'shared/types';
 
 import WSocket from 'shared/helpers/WSocket';
 
@@ -11,7 +11,7 @@ const Home: React.FC = () => {
   const [liveStreams, setLiveStreams] = useState<PublicStream[]>([]);
 
   useEffect(() => {
-    let ws: WSocket<AllLiveStreamsEvents, never> | undefined;
+    let ws: WSocket<StreamsServerEvent, never> | undefined;
 
     (async () => {
       ws = new WSocket(`ws://${location.host}/api/stream/subscribeAll`);

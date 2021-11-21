@@ -1,19 +1,23 @@
-import { PublicStream } from 'types';
+import EventStream from 'shared-helpers/EventStream.ts';
 
-import { ServerUser, User, getPublicUser } from 'db';
+import { ServerUser, User } from 'db';
 
 import Stream from './Stream.ts';
 
-type Subscriber = (stream: Stream) => unknown;
+export interface StreamStartEvent {
+  type: 'streamStart';
+  stream: Stream;
+}
 
-class Streams {
-  #liveStreams: Map<string, Stream>;
-  #subscribers: Set<Subscriber>;
+export interface StreamEndEvent {
+  type: 'streamEnd';
+  stream: Stream;
+}
 
-  constructor() {
-    this.#liveStreams = new Map();
-    this.#subscribers = new Set();
-  }
+export type StreamsEvent = StreamStartEvent | StreamEndEvent;
+
+class Streams extends EventStream<StreamsEvent> {
+  #liveStreams = new Map<string, Stream>();
 
   end(login: string) {
     const stream = this.#liveStreams.get(login);
@@ -22,22 +26,20 @@ class Streams {
       return;
     }
 
+    stream.end();
     this.#liveStreams.delete(login);
-
-    for (const subscriber of this.#subscribers) {
-      subscriber(stream);
-    }
+    this.emit({
+      type: 'streamEnd',
+      stream,
+    });
   }
 
   getLiveStreams(): Map<string, Stream> {
     return this.#liveStreams;
   }
 
-  getPublicStream(stream: Stream): PublicStream {
-    return {
-      user: getPublicUser(stream.getUser()),
-      duration: Date.now() - stream.getStartTime(),
-    };
+  getStream(login: string): Stream | undefined {
+    return this.#liveStreams.get(login);
   }
 
   async loadLive() {
@@ -49,19 +51,12 @@ class Streams {
   start(user: ServerUser) {
     const stream = new Stream(user);
 
+    stream.start();
     this.#liveStreams.set(user.login, stream);
-
-    for (const subscriber of this.#subscribers) {
-      subscriber(stream);
-    }
-  }
-
-  subscribe(subscriber: Subscriber) {
-    this.#subscribers.add(subscriber);
-
-    return () => {
-      this.#subscribers.delete(subscriber);
-    };
+    this.emit({
+      type: 'streamStart',
+      stream,
+    });
   }
 }
 

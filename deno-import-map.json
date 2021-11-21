@@ -6,6 +6,7 @@
     "routes/": "./app/deno-server/routes/",
     "types": "./app/deno-server/types/all.ts",
     "db": "./app/deno-server/db/all.ts",
+    "shared/helpers/EventStream": "./app/shared/helpers/EventStream.ts",
 
     "streams": "https://deno.land/std@0.113.0/streams/mod.ts",
     "dotenv": "https://deno.land/x/dotenv@v3.1.0/mod.ts",

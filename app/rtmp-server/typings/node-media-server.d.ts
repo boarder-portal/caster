@@ -25,6 +25,7 @@ declare module 'node-media-server' {
         dashFlags?: string;
       }[];
     };
+    logType?: number;
   }
 
   export class Session {

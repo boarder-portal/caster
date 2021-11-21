@@ -27,6 +27,8 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules/**"
+    "node_modules/**",
+    "media/**",
+    "app/deno-server/**"
   ]
 }

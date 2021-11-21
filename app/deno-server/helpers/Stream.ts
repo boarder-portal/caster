@@ -1,12 +1,30 @@
-import { ServerUser } from 'db';
+import { SendMessageEvent, StreamServerEvent, PublicStream } from 'types';
 
-export default class Stream {
+import EventStream from 'shared-helpers/EventStream.ts';
+
+import { ServerUser, getPublicUser } from 'db';
+
+export default class Stream extends EventStream<StreamServerEvent> {
   readonly #user: ServerUser;
-  readonly #startTime: number;
+  readonly #startTime = Date.now();
 
   constructor(user: ServerUser) {
+    super();
+
     this.#user = user;
-    this.#startTime = Date.now();
+  }
+
+  end() {
+    this.#user.isLive = false;
+
+    this.emit(null);
+  }
+
+  getPublicStream(): PublicStream {
+    return {
+      user: getPublicUser(this.#user),
+      duration: Date.now() - this.#startTime,
+    };
   }
 
   getStartTime(): number {
@@ -15,5 +33,23 @@ export default class Stream {
 
   getUser(): ServerUser {
     return this.#user;
+  }
+
+  isSendMessageEvent(event: any): event is SendMessageEvent {
+    return (
+      event?.type === 'sendMessage'
+      && typeof event.message === 'string'
+    );
+  }
+
+  messageSent(message: string) {
+    this.emit({
+      type: 'messageSent',
+      message,
+    });
+  }
+
+  start() {
+    this.#user.isLive = true;
   }
 }
