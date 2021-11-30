@@ -9,7 +9,7 @@
   max-height: 100%;
 }
 
-.controls {
+.controls, .loaderContainer {
   position: absolute;
   top: 0;
   right: 0;
@@ -17,7 +17,7 @@
   left: 0;
 }
 
-.loaderContainer, .playContainer {
+.loaderContainer, .playPauseContainer {
   composes: center from '../../styles/common.pcss';
 
   width: 100%;
@@ -31,18 +31,64 @@
   }
 }
 
-.playContainer {
-  cursor: pointer;
-  background-color: #0000;
-  transition: background-color ease-in-out 0.5s;
+.controls {
+  --bottomPanelHeight: 40px;
 
-  &:hover {
-    background-color: #0001;
+  .playPauseContainer {
+    height: calc(100% - var(--bottomPanelHeight));
+    background-color: #0000;
+    cursor: pointer;
+    transition: background-color ease-in-out 0.3s;
+
+    .playButton, .pauseButton {
+      width: auto;
+      height: 25%;
+      color: var(--primaryMainColor);
+    }
+
+    .pauseButton {
+      opacity: 0;
+      transition: opacity ease-in-out 0.3s;
+    }
   }
 
-  .playButton {
-    width: auto;
-    height: 25%;
-    color: var(--primaryMainColor);
+  .bottomPanel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: var(--bottomPanelHeight);
+    padding: 0 20px;
+    background-color: #ccca;
+
+    .playIcon, .pauseIcon {
+      flex-grow: 0;
+      flex-shrink: 0;
+      height: 50%;
+      aspect-ratio: 1 / 1;
+      color: var(--primaryMainColor);
+      cursor: pointer;
+    }
+
+    .volume {
+      flex: 0 0 10%;
+      width: 10%;
+      height: 30%;
+    }
+
+    .controlsContent {
+      flex-grow: 1;
+    }
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      .playPauseContainer {
+        background-color: #0001;
+      }
+
+      .pauseButton {
+        opacity: 1;
+      }
+    }
   }
 }

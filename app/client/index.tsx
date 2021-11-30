@@ -1,4 +1,4 @@
-import { createTheme, ThemeProvider } from '@mui/material';
+import { alpha, createTheme, ThemeProvider } from '@mui/material';
 import { blue, orange } from '@mui/material/colors';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -18,6 +18,7 @@ const theme = createTheme({
 
 const globalCssVars = {
   '--primaryMainColor': theme.palette.primary.main,
+  '--primaryMainColorTransparent': alpha(theme.palette.primary.main, 0.3),
   '--primaryDarkColor': theme.palette.primary.dark,
   '--secondaryMainColor': theme.palette.secondary.main,
   '--errorColor': theme.palette.error.main,
