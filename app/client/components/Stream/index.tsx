@@ -1,6 +1,6 @@
 import { Input } from '@mui/material';
 import last from 'lodash/last';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { ChatMessage, StreamClientEvent, StreamServerEvent } from 'shared/types';
@@ -9,7 +9,7 @@ import WSocket from 'shared/helpers/WSocket';
 
 import Player from 'client/components/Player';
 
-import { useContentScroll } from 'client/hooks';
+import { useConstantCallback, useContentScroll } from 'client/hooks';
 import { isMobileAtom, userAtom } from 'client/recoil/atoms';
 
 import classes from './index.pcss';
@@ -28,11 +28,32 @@ const Stream: React.FC<Props> = (props) => {
   const wsRef = useRef<WSocket<StreamServerEvent, StreamClientEvent> | null>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const closedExternallyRef = useRef<boolean>(false);
+  const scrollBottomRef = useRef<number>(0);
 
   const user = useRecoilValue(userAtom);
   const isMobile = useRecoilValue(isMobileAtom);
 
-  const sendMessage = useCallback(() => {
+  const getScrollBottom = useConstantCallback(() => {
+    const messages = messagesRef.current;
+
+    if (!messages) {
+      return NaN;
+    }
+
+    return messages.scrollHeight - messages.clientHeight - messages.scrollTop;
+  });
+
+  const setScrollBottom = useConstantCallback((scrollBottom: number) => {
+    const messages = messagesRef.current;
+
+    if (!messages) {
+      return;
+    }
+
+    messages.scrollTop = messages.scrollHeight - messages.clientHeight - scrollBottom;
+  });
+
+  const sendMessage = useConstantCallback(() => {
     if (!message) {
       return;
     }
@@ -43,18 +64,22 @@ const Stream: React.FC<Props> = (props) => {
     });
 
     setMessage('');
-  }, [message]);
+  });
 
-  const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+  const onKeyDown = useConstantCallback((e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
-  }, [sendMessage]);
+  });
 
-  const onMessageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const onMessageChange = useConstantCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
-  }, []);
+  });
+
+  const onScroll = useConstantCallback(() => {
+    scrollBottomRef.current = getScrollBottom();
+  });
 
   useEffect(() => {
     const ws = new WSocket<StreamServerEvent, StreamClientEvent>(`ws://${location.host}/api/stream/subscribe/${login}`);
@@ -86,24 +111,38 @@ const Stream: React.FC<Props> = (props) => {
   }, [login, onStreamEnd]);
 
   useEffect(() => {
+    const lastMessage = last(messagesRef.current?.children);
+
+    if (!lastMessage) {
+      return;
+    }
+
+    const scrollBottom = getScrollBottom();
+
+    if (scrollBottom <= lastMessage.clientHeight + 10) {
+      setScrollBottom(0);
+    }
+  }, [getScrollBottom, messages.length, setScrollBottom]);
+
+  useEffect(() => {
     const messages = messagesRef.current;
 
     if (!messages) {
       return;
     }
 
-    const lastMessage = last(messages.children);
+    const observer = new ResizeObserver(() => {
+      setScrollBottom(scrollBottomRef.current);
+    });
 
-    if (!lastMessage) {
-      return;
-    }
+    observer.observe(messages, {
+      box: 'border-box',
+    });
 
-    const maxScroll = messages.scrollHeight - messages.clientHeight;
-
-    if (maxScroll - messages.scrollTop - 10 <= lastMessage.clientHeight) {
-      messages.scrollTop = maxScroll;
-    }
-  }, [messages.length]);
+    return () => {
+      observer.disconnect();
+    };
+  }, [setScrollBottom]);
 
   useContentScroll(!isMobile);
 
@@ -118,7 +157,7 @@ const Stream: React.FC<Props> = (props) => {
       </div>
 
       <div className={classes.chat}>
-        <div ref={messagesRef} className={classes.messages}>
+        <div ref={messagesRef} className={classes.messages} onScroll={onScroll}>
           {messages.map(({ user, message }, index) => {
             return (
               <div key={index}>
