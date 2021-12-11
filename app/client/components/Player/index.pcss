@@ -50,6 +50,16 @@
       opacity: 0;
       transition: opacity ease-in-out 0.3s;
     }
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: #0001;
+
+        .pauseButton {
+          opacity: 1;
+        }
+      }
+    }
   }
 
   .bottomPanel {
@@ -57,16 +67,27 @@
     align-items: center;
     gap: 10px;
     height: var(--bottomPanelHeight);
-    padding: 0 20px;
-    background-color: #ccca;
+    background-color: #e8e8e8cc;
+
+    .playButton, .pauseButton {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: stretch;
+      flex: 0 0 50px;
+      cursor: pointer;
+      background-color: transparent;
+      transition: background-color ease-in-out 0.3s;
+
+      &:hover {
+        background-color: #e8e8e8;
+      }
+    }
 
     .playIcon, .pauseIcon {
-      flex-grow: 0;
-      flex-shrink: 0;
       height: 50%;
       aspect-ratio: 1 / 1;
       color: var(--primaryMainColor);
-      cursor: pointer;
     }
 
     .volume {
@@ -77,18 +98,6 @@
 
     .controlsContent {
       flex-grow: 1;
-    }
-  }
-
-  @media (hover: hover) {
-    &:hover {
-      .playPauseContainer {
-        background-color: #0001;
-      }
-
-      .pauseButton {
-        opacity: 1;
-      }
     }
   }
 }

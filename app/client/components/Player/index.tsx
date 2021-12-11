@@ -125,9 +125,13 @@ const Player: React.FC<Props> = (props) => {
           <div className={classes.bottomPanel}>
             {!isMobile && (
               isPlaying ? (
-                <PauseIcon className={classes.pauseIcon} onClick={pause} />
+                <div className={classes.pauseButton} onClick={pause}>
+                  <PauseIcon className={classes.pauseIcon} />
+                </div>
               ) : (
-                <PlayArrowIcon className={classes.playIcon} onClick={play} />
+                <div className={classes.playButton} onClick={play}>
+                  <PlayArrowIcon className={classes.playIcon} />
+                </div>
               )
             )}
 
