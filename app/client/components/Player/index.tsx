@@ -14,7 +14,13 @@ import { WithClassName } from 'client/types';
 import Loader from 'client/components/Loader';
 import Volume from 'client/components/Volume';
 
-import { useBoolean, useConstantCallback, useEventListener, useLocalStorageState } from 'client/hooks';
+import {
+  useBoolean,
+  useConstantCallback,
+  useEventListener,
+  useLocalStorageState,
+  usePlayPauseController,
+} from 'client/hooks';
 import { isMobileAtom } from 'client/recoil/atoms';
 
 import * as classes from './index.pcss';
@@ -45,9 +51,32 @@ const Player: React.FC<Props> = (props) => {
     setTrue: startPlaying,
     setFalse: stopPlaying,
   } = useBoolean(false);
+  const {
+    isInProcess,
+    startProcess,
+    cancelProcess,
+  } = usePlayPauseController();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<flvJs.Player | null>(null);
+
+  const handleFullScreenIfNeeded = useConstantCallback(async (): Promise<boolean> => {
+    if (isInProcess) {
+      cancelProcess();
+
+      if (isFullScreen) {
+        await exitFullScreen();
+      } else {
+        await enterFullScreen();
+      }
+
+      return true;
+    }
+
+    await startProcess();
+
+    return false;
+  });
 
   const play = useConstantCallback(async () => {
     const video = videoRef.current;
@@ -56,15 +85,23 @@ const Player: React.FC<Props> = (props) => {
       return;
     }
 
+    if (await handleFullScreenIfNeeded()) {
+      return;
+    }
+
     video.currentTime = video.buffered.end(0) - 0.1;
 
     await video.play();
   });
 
-  const pause = useConstantCallback(() => {
+  const pause = useConstantCallback(async () => {
     const video = videoRef.current;
 
     if (!video || video.paused) {
+      return;
+    }
+
+    if (await handleFullScreenIfNeeded()) {
       return;
     }
 
@@ -175,7 +212,10 @@ const Player: React.FC<Props> = (props) => {
         </div>
       ) : (
         <div className={classNames(classes.controls)}>
-          <div className={classNames(classes.playPauseContainer)} onClick={isPlaying ? pause : play}>
+          <div
+            className={classNames(classes.playPauseContainer)}
+            onClick={isPlaying ? pause : play}
+          >
             {isPlaying ? (
               <PauseIcon className={classes.pauseButton} />
             ) : (

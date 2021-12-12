@@ -4,3 +4,4 @@ export * from './useConstantCallback';
 export * from './useContentScroll';
 export * from './useEventListener';
 export * from './useLocalStorageState';
+export * from './usePlayPauseController';

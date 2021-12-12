@@ -36,29 +36,15 @@
 
   .playPauseContainer {
     height: calc(100% - var(--bottomPanelHeight));
-    background-color: #0000;
+    background-color: #0001;
     cursor: pointer;
-    transition: background-color ease-in-out 0.3s;
+    opacity: 0;
+    transition: opacity ease-in-out 0.3s;
 
     .playButton, .pauseButton {
       width: auto;
       height: 25%;
       color: var(--primaryMainColor);
-    }
-
-    .pauseButton {
-      opacity: 0;
-      transition: opacity ease-in-out 0.3s;
-    }
-
-    @media (hover: hover) {
-      &:hover {
-        background-color: #0001;
-
-        .pauseButton {
-          opacity: 1;
-        }
-      }
     }
   }
 
@@ -68,6 +54,8 @@
     gap: 10px;
     height: var(--bottomPanelHeight);
     background-color: #e8e8e8cc;
+    opacity: 1;
+    transition: opacity ease-in-out 0.3s;
 
     .iconButton {
       flex-grow: 0;
@@ -107,6 +95,20 @@
 
     .pictureInPictureButton, .fullScreenButton {
       aspect-ratio: 1 / 1;
+    }
+  }
+
+  &.hidden {
+    .bottomPanel {
+      opacity: 0;
+    }
+  }
+
+  &:not(.hidden) {
+    @media (hover: hover) {
+      .playPauseContainer:hover {
+        opacity: 1;
+      }
     }
   }
 }
