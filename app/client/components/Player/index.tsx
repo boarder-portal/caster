@@ -1,8 +1,12 @@
+import AspectRatioIcon from '@mui/icons-material/AspectRatio';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import PauseIcon from '@mui/icons-material/Pause';
+import PictureInPictureIcon from '@mui/icons-material/PictureInPictureAlt';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import classNames from 'classnames';
 import flvJs from 'flv.js';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { WithClassName } from 'client/types';
@@ -10,7 +14,7 @@ import { WithClassName } from 'client/types';
 import Loader from 'client/components/Loader';
 import Volume from 'client/components/Volume';
 
-import { useBoolean, useConstantCallback, useLocalStorageState } from 'client/hooks';
+import { useBoolean, useConstantCallback, useEventListener, useLocalStorageState } from 'client/hooks';
 import { isMobileAtom } from 'client/recoil/atoms';
 
 import * as classes from './index.pcss';
@@ -30,6 +34,8 @@ const Player: React.FC<Props> = (props) => {
 
   const isMobile = useRecoilValue(isMobileAtom);
   const [volume, setVolume] = useLocalStorageState<number>('playerVolume', 1);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isPictureInPicture, setIsPictureInPicture] = useState(false);
   const {
     value: isLoading,
     setFalse: onLoadEnd,
@@ -39,6 +45,7 @@ const Player: React.FC<Props> = (props) => {
     setTrue: startPlaying,
     setFalse: stopPlaying,
   } = useBoolean(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<flvJs.Player | null>(null);
 
@@ -64,8 +71,48 @@ const Player: React.FC<Props> = (props) => {
     video.pause();
   });
 
+  const enterFullScreen = useConstantCallback(async () => {
+    const root = rootRef.current;
+
+    if (!root) {
+      return;
+    }
+
+    await root.requestFullscreen({
+      navigationUI: 'hide',
+    });
+  });
+
+  const exitFullScreen = useConstantCallback(async () => {
+    await document.exitFullscreen();
+  });
+
+  const enterPictureInPicture = useConstantCallback(async () => {
+    const video = videoRef.current;
+
+    if (!video) {
+      return;
+    }
+
+    await video.requestPictureInPicture();
+  });
+
+  const exitPictureInPicture = useConstantCallback(async () => {
+    if (isPictureInPicture) {
+      await document.exitPictureInPicture();
+    }
+  });
+
+  useEventListener('fullscreenchange', () => {
+    setIsFullScreen(Boolean(document.fullscreenElement));
+  }, document);
+
+  useEventListener('focus', exitPictureInPicture, window);
+
   useEffect(() => {
-    if (!flvJs.isSupported() || !videoRef.current) {
+    const video = videoRef.current;
+
+    if (!flvJs.isSupported() || !video) {
       return;
     }
 
@@ -75,16 +122,30 @@ const Player: React.FC<Props> = (props) => {
       url: `/live/${id}`,
     });
 
-    player.attachMediaElement(videoRef.current);
+    player.attachMediaElement(video);
     player.load();
 
     playerRef.current = player;
+
+    const onEnterPictureInPicture = () => {
+      setIsPictureInPicture(true);
+    };
+
+    const onExitPictureInPicture = () => {
+      setIsPictureInPicture(false);
+    };
+
+    video.addEventListener('enterpictureinpicture', onEnterPictureInPicture);
+    video.addEventListener('leavepictureinpicture', onExitPictureInPicture);
 
     return () => {
       playerRef.current = null;
 
       player.destroy();
       player.detachMediaElement();
+
+      video.removeEventListener('enterpictureinpicture', onEnterPictureInPicture);
+      video.removeEventListener('leavepictureinpicture', onExitPictureInPicture);
     };
   }, [id]);
 
@@ -97,7 +158,7 @@ const Player: React.FC<Props> = (props) => {
   }, [volume]);
 
   return (
-    <div className={classNames(classes.root, className)}>
+    <div ref={rootRef} className={classNames(classes.root, className)}>
       <video
         ref={videoRef}
         className={classes.player}
@@ -125,12 +186,18 @@ const Player: React.FC<Props> = (props) => {
           <div className={classes.bottomPanel}>
             {!isMobile && (
               isPlaying ? (
-                <div className={classes.pauseButton} onClick={pause}>
-                  <PauseIcon className={classes.pauseIcon} />
+                <div
+                  className={classNames(classes.pauseButton, classes.iconButton)}
+                  onClick={pause}
+                >
+                  <PauseIcon />
                 </div>
               ) : (
-                <div className={classes.playButton} onClick={play}>
-                  <PlayArrowIcon className={classes.playIcon} />
+                <div
+                  className={classNames(classes.playButton, classes.iconButton)}
+                  onClick={play}
+                >
+                  <PlayArrowIcon />
                 </div>
               )
             )}
@@ -144,6 +211,22 @@ const Player: React.FC<Props> = (props) => {
             )}
 
             <div className={classes.controlsContent} />
+
+            {!isMobile && (
+              <div
+                className={classNames(classes.pictureInPictureButton, classes.iconButton)}
+                onClick={isPictureInPicture ? exitPictureInPicture : enterPictureInPicture}
+              >
+                {isPictureInPicture ? <AspectRatioIcon /> : <PictureInPictureIcon />}
+              </div>
+            )}
+
+            <div
+              className={classNames(classes.fullScreenButton, classes.iconButton)}
+              onClick={isFullScreen ? exitFullScreen : enterFullScreen}
+            >
+              {isFullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            </div>
           </div>
         </div>
       )}

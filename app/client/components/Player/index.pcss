@@ -69,25 +69,30 @@
     height: var(--bottomPanelHeight);
     background-color: #e8e8e8cc;
 
-    .playButton, .pauseButton {
+    .iconButton {
+      flex-grow: 0;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       align-self: stretch;
-      flex: 0 0 50px;
       cursor: pointer;
       background-color: transparent;
+      color: var(--primaryMainColor);
       transition: background-color ease-in-out 0.3s;
 
       &:hover {
         background-color: #e8e8e8;
       }
+
+      > svg {
+        height: 50%;
+        aspect-ratio: 1 / 1;
+      }
     }
 
-    .playIcon, .pauseIcon {
-      height: 50%;
-      aspect-ratio: 1 / 1;
-      color: var(--primaryMainColor);
+    .playButton, .pauseButton {
+      width: 50px;
     }
 
     .volume {
@@ -98,6 +103,10 @@
 
     .controlsContent {
       flex-grow: 1;
+    }
+
+    .pictureInPictureButton, .fullScreenButton {
+      aspect-ratio: 1 / 1;
     }
   }
 }
