@@ -8,7 +8,7 @@
     "client:build": "parcel build index.html --cache-dir .parcel-cache --dist-dir ./public --public-url /public",
     "server:run": "npm run ts:run app/server/index.ts",
     "deno-server:watch": "denon run --unstable --import-map deno-import-map.json --allow-run --allow-env --allow-write --allow-read --allow-net app/deno-server/index.ts",
-    "deno-server:run": "deno run --unstable --import-map deno-import-map.json --allow-run --allow-net --allow-write --allow-read --allow-net app/deno-server/index.ts",
+    "deno-server:run": "deno run --unstable --import-map deno-import-map.json --allow-run --allow-env --allow-write --allow-read --allow-net app/deno-server/index.ts",
     "rtmp:run": "npm run ts:run app/rtmp-server/index.ts",
     "css:watch": "tcm -p app/**/*.pcss --watch",
     "lint": "eslint . --ext .ts --ext .tsx",
