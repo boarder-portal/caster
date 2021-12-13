@@ -119,9 +119,12 @@ const Player: React.FC<Props> = (props) => {
       return;
     }
 
-    await root.requestFullscreen({
-      navigationUI: 'hide',
-    });
+    await Promise.all([
+      root.requestFullscreen({
+        navigationUI: 'hide',
+      }),
+      screen.orientation.lock('landscape'),
+    ]);
   });
 
   const exitFullScreen = useConstantCallback(async () => {
@@ -224,6 +227,12 @@ const Player: React.FC<Props> = (props) => {
     }
   }, [clearHideControlsTimeout, isPlaying, setHideControlsTimeout, showControls]);
 
+  useEffect(() => {
+    if (isMobile && !isFullScreen) {
+      screen.orientation.unlock();
+    }
+  }, [isFullScreen, isMobile]);
+
   return (
     <div
       ref={rootRef}
@@ -249,7 +258,9 @@ const Player: React.FC<Props> = (props) => {
           <div
             className={classNames(classes.playPauseContainer)}
             onClick={togglePlay}
-          />
+          >
+            {!isPlaying && <PlayArrowIcon className={classes.togglePlayButton} />}
+          </div>
 
           <div className={classes.bottomPanel}>
             {!isMobile && (
