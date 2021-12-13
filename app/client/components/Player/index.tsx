@@ -163,7 +163,13 @@ const Player: React.FC<Props> = (props) => {
   }, document);
 
   useEventListener('keydown', async (e) => {
-    if (e.code === 'Space') {
+    if (
+      e.code === 'Space'
+      && !(e.target instanceof HTMLInputElement)
+      && !(e.target instanceof HTMLTextAreaElement)
+    ) {
+      e.preventDefault();
+
       await togglePlay();
     }
   }, document);
