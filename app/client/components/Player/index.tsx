@@ -52,6 +52,11 @@ const Player: React.FC<Props> = (props) => {
     setFalse: stopPlaying,
   } = useBoolean(false);
   const {
+    value: hiddenControls,
+    setTrue: hideControls,
+    setFalse: showControls,
+  } = useBoolean(true);
+  const {
     isInProcess,
     startProcess,
     cancelProcess,
@@ -59,6 +64,15 @@ const Player: React.FC<Props> = (props) => {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<flvJs.Player | null>(null);
+  const hideControlsTimeoutRef = useRef<number | undefined>();
+
+  const setHideControlsTimeout = useConstantCallback(() => {
+    hideControlsTimeoutRef.current = window.setTimeout(hideControls, 2000);
+  });
+
+  const clearHideControlsTimeout = useConstantCallback(() => {
+    window.clearTimeout(hideControlsTimeoutRef.current);
+  });
 
   const handleFullScreenIfNeeded = useConstantCallback(async (): Promise<boolean> => {
     if (isInProcess) {
@@ -78,10 +92,10 @@ const Player: React.FC<Props> = (props) => {
     return false;
   });
 
-  const play = useConstantCallback(async () => {
+  const togglePlay = useConstantCallback(async () => {
     const video = videoRef.current;
 
-    if (!video || !video.paused) {
+    if (!video) {
       return;
     }
 
@@ -89,23 +103,13 @@ const Player: React.FC<Props> = (props) => {
       return;
     }
 
-    video.currentTime = video.buffered.end(0) - 0.1;
+    if (video.paused) {
+      video.currentTime = video.buffered.end(0) - 0.1;
 
-    await video.play();
-  });
-
-  const pause = useConstantCallback(async () => {
-    const video = videoRef.current;
-
-    if (!video || video.paused) {
-      return;
+      await video.play();
+    } else {
+      video.pause();
     }
-
-    if (await handleFullScreenIfNeeded()) {
-      return;
-    }
-
-    video.pause();
   });
 
   const enterFullScreen = useConstantCallback(async () => {
@@ -140,8 +144,25 @@ const Player: React.FC<Props> = (props) => {
     }
   });
 
+  const onMouseMove = useConstantCallback(() => {
+    if (!isPlaying) {
+      return;
+    }
+
+    showControls();
+
+    clearHideControlsTimeout();
+    setHideControlsTimeout();
+  });
+
   useEventListener('fullscreenchange', () => {
     setIsFullScreen(Boolean(document.fullscreenElement));
+  }, document);
+
+  useEventListener('keydown', async (e) => {
+    if (e.code === 'Space') {
+      await togglePlay();
+    }
   }, document);
 
   useEventListener('focus', exitPictureInPicture, window);
@@ -194,8 +215,21 @@ const Player: React.FC<Props> = (props) => {
     }
   }, [volume]);
 
+  useEffect(() => {
+    if (isPlaying) {
+      setHideControlsTimeout();
+    } else {
+      clearHideControlsTimeout();
+      showControls();
+    }
+  }, [clearHideControlsTimeout, isPlaying, setHideControlsTimeout, showControls]);
+
   return (
-    <div ref={rootRef} className={classNames(classes.root, className)}>
+    <div
+      ref={rootRef}
+      className={classNames(classes.root, className)}
+      onMouseMove={onMouseMove}
+    >
       <video
         ref={videoRef}
         className={classes.player}
@@ -211,35 +245,20 @@ const Player: React.FC<Props> = (props) => {
           <Loader className={classes.loader} />
         </div>
       ) : (
-        <div className={classNames(classes.controls)}>
+        <div className={classNames(classes.controls, hiddenControls && classes.hidden)}>
           <div
             className={classNames(classes.playPauseContainer)}
-            onClick={isPlaying ? pause : play}
-          >
-            {isPlaying ? (
-              <PauseIcon className={classes.pauseButton} />
-            ) : (
-              <PlayArrowIcon className={classes.playButton} />
-            )}
-          </div>
+            onClick={togglePlay}
+          />
 
           <div className={classes.bottomPanel}>
             {!isMobile && (
-              isPlaying ? (
-                <div
-                  className={classNames(classes.pauseButton, classes.iconButton)}
-                  onClick={pause}
-                >
-                  <PauseIcon />
-                </div>
-              ) : (
-                <div
-                  className={classNames(classes.playButton, classes.iconButton)}
-                  onClick={play}
-                >
-                  <PlayArrowIcon />
-                </div>
-              )
+              <div
+                className={classNames(classes.togglePlayButton, classes.iconButton)}
+                onClick={togglePlay}
+              >
+                {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+              </div>
             )}
 
             {!isMobile && (
