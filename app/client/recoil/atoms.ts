@@ -9,5 +9,5 @@ export const userAtom = atom<PrivateUser | null>({
 
 export const isMobileAtom = atom<boolean>({
   key: 'isMobile',
-  default: window.matchMedia('(max-width: 600px)').matches,
+  default: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
 });

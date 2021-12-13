@@ -67,8 +67,10 @@
       color: var(--primaryMainColor);
       transition: background-color ease-in-out 0.3s;
 
-      &:hover {
-        background-color: #e8e8e8;
+      @media (hover: hover) {
+        &:hover {
+          background-color: #e8e8e8;
+        }
       }
 
       > svg {
@@ -102,5 +104,9 @@
         opacity: 1;
       }
     }
+  }
+
+  &.shown {
+    opacity: 1;
   }
 }

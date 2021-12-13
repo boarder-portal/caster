@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useLayoutEffect } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import ApiClient from 'client/helpers/ApiClient';
 
@@ -17,7 +17,7 @@ const apiClient = new ApiClient();
 
 const App: React.FC = () => {
   const [user, setUser] = useRecoilState(userAtom);
-  const setIsMobile = useSetRecoilState(isMobileAtom);
+  const isMobile = useRecoilValue(isMobileAtom);
 
   const logout = useCallback(async () => {
     await apiClient.post('/auth/logout');
@@ -25,18 +25,10 @@ const App: React.FC = () => {
     setUser(null);
   }, [setUser]);
 
-  useEffect(() => {
-    const queryList = window.matchMedia('(max-width: 600px)');
-    const listener = (e: MediaQueryListEvent) => {
-      setIsMobile(e.matches);
-    };
-
-    queryList.addEventListener('change', listener);
-
-    return () => {
-      queryList.removeEventListener('change', listener);
-    };
-  }, [setIsMobile]);
+  useLayoutEffect(() => {
+    document.body.classList.toggle('desktop', !isMobile);
+    document.body.classList.toggle('mobile', isMobile);
+  }, [isMobile]);
 
   return (
     <>

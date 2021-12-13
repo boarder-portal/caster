@@ -254,7 +254,13 @@ const Player: React.FC<Props> = (props) => {
           <Loader className={classes.loader} />
         </div>
       ) : (
-        <div className={classNames(classes.controls, hiddenControls && classes.hidden)}>
+        <div
+          className={classNames(
+            classes.controls,
+            hiddenControls && classes.hidden,
+            !isPlaying && classes.shown,
+          )}
+        >
           <div
             className={classNames(classes.playPauseContainer)}
             onClick={togglePlay}

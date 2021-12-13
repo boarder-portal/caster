@@ -24,14 +24,14 @@
   flex-direction: column;
   gap: 15px;
 
-  @media (min-width: 601px) {
+  :global(body.desktop) & {
     max-width: 600px;
     padding: 40px;
     border: 1px solid var(--borderColor);
     border-radius: 4px;
   }
 
-  @media (max-width: 600px) {
+  :global(body.mobile) & {
     padding: 40px;
   }
 }

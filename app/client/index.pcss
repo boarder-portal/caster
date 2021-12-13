@@ -30,7 +30,7 @@ html, body {
     min-height: 100%;
     height: calc(100% / (1 - var(--scroll)));
 
-    @media (min-width: 601px) {
+    :global(body.desktop) & {
       min-width: 1024px;
     }
   }
